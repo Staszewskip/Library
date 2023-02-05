@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Entity(name = "books")
+@Entity(name = "BOOKS")
 public class Book {
     @Id
     @GeneratedValue

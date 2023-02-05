@@ -5,14 +5,16 @@ import com.crud.library.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Date;
+import java.time.LocalDate;
+
 @AllArgsConstructor
 @Getter
-public class BorrowStatusDto {
+public class BorrowRecordDto {
 
     private long borrowId;
     private User user;
     private BookCopy bookCopy;
-    private Date borrowDate;
+    private LocalDate borrowDate;
+    private LocalDate returnDate;
 
 }

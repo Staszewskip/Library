@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table
+@Table(name = "BOOK_COPIES")
 public class BookCopy {
     @Id
     @GeneratedValue
@@ -19,5 +19,15 @@ public class BookCopy {
     @JoinColumn(name = "BOOK_ID")
     private Book book;
 
+    @ManyToOne
+    @JoinColumn(name = "BORROW_ID")
+    private BorrowRecord borrowId;
+
+    @Column
+    private String status;
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
 }

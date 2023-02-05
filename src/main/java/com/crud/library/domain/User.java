@@ -1,15 +1,12 @@
 package com.crud.library.domain;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,6 +15,7 @@ import java.util.Date;
 @Table
 public class User {
     @Id
+    @GeneratedValue
     private long userId;
 
     @Column
@@ -27,7 +25,7 @@ public class User {
     private String lastname;
 
     @Column
-    private Date registrationDate;
+    private LocalDate registrationDate;
 
 
 }
