@@ -12,9 +12,7 @@ import java.util.List;
 
 public class BookDto {
     private long bookId;
-
-    List<BookCopy> bookCopyList = new ArrayList<>();
-
+    List<BookCopy> bookCopyList;
     private String title;
     private String author;
     private int year;

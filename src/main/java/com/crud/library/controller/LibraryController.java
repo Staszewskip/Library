@@ -46,8 +46,9 @@ public class LibraryController {
     }
 
     @GetMapping(value = "/getNbOfBookCopies")
-    public int getNbOfBookCopies(@RequestParam BookDto BookDto) {
-        return BookDto.getBookCopyList().size();
+    public long getNbOfBookCopies(@RequestParam BookDto bookDto, @RequestParam String bookCopyStatus) {
+        Book bookTitle = libraryMapper.mapToBook(bookDto);
+        return dbService.getNbOfCopies(bookTitle,bookCopyStatus);
     }
 
     @PostMapping(value = "/borrowBook")

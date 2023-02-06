@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,21 +39,24 @@ public class DbService {
         bookCopy.setStatus(status);
     }
 
-    public Optional<BookCopy> findBookCopy(final long bookCopyId) {
-        return bookCopyRepository.findById(bookCopyId);
+    public long getNbOfCopies(Book book, String bookCopyStatus){
+        List<BookCopy> bookCopyTitles = book.getBookCopyList();
+        return  bookCopyTitles.stream()
+                .filter(status ->status.getStatus().equals(bookCopyStatus))
+                .count();
     }
 
     public void borrowBook(User user, BookCopy bookCopy) {
         BorrowRecord borrowRecord = new BorrowRecord(user, bookCopy, LocalDate.now());
         borrowRecordRepository.save(borrowRecord);
-        bookCopyRepository.delete(bookCopy);
+        bookCopy.setStatus("borrowed");
     }
 
 
     public void returnBook(BorrowRecord borrowRecord) {
         borrowRecord.setReturnDate(LocalDate.now());
-        borrowRecordRepository.save(borrowRecord);
-        bookCopyRepository.save(borrowRecord.getBookCopy());
+        BookCopy bookCopy = borrowRecord.getBookCopy();
+        bookCopy.setStatus("returned");
     }
 
 }
