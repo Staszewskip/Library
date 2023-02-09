@@ -14,26 +14,20 @@ import org.springframework.stereotype.Service;
 public class LibraryMapper {
     public User mapToUser(final UserDto userDto) {
         return new User(
-                userDto.getUserId(),
-                userDto.getFirstname(),
-                userDto.getLastname(),
-                userDto.getRegistrationDate()
+                userDto.getFirstName(),
+                userDto.getLastName()
         );
     }
 
     public UserDto mapToUserDto(final User user) {
         return new UserDto(
-                user.getUserId(),
-                user.getFirstname(),
-                user.getLastname(),
-                user.getRegistrationDate()
+                user.getFirstName(),
+                user.getLastName()
         );
     }
 
     public Book mapToBook(final BookDto bookDto) {
         return new Book(
-                bookDto.getBookId(),
-                bookDto.getBookCopyList(),
                 bookDto.getTitle(),
                 bookDto.getAuthor(),
                 bookDto.getYear()
@@ -42,8 +36,6 @@ public class LibraryMapper {
 
     public Book mapToBookDto(final Book book) {
         return new Book(
-                book.getBookId(),
-                book.getBookCopyList(),
                 book.getTitle(),
                 book.getAuthor(),
                 book.getYear()
@@ -52,36 +44,27 @@ public class LibraryMapper {
 
     public BookCopy mapToBookCopy(final BookCopyDto bookCopyDto) {
         return new BookCopy(
-                bookCopyDto.getBookCopyId(),
-                bookCopyDto.getBook(),
-                bookCopyDto.getBorrowId(),
-                bookCopyDto.getStatus()
+                bookCopyDto.getBook()
         );
     }
 
     public BookCopyDto mapToBookCopy(final BookCopy bookCopy) {
         return new BookCopyDto(
-                bookCopy.getBookCopyId(),
-                bookCopy.getBook(),
-                bookCopy.getBorrowId(),
-                bookCopy.getStatus()
+                bookCopy.getBook()
         );
     }
 
     public BorrowRecord mapToBorrowRecord(final BorrowRecordDto borrowRecordDto) {
         return new BorrowRecord(
                 borrowRecordDto.getUser(),
-                borrowRecordDto.getBookCopy(),
-                borrowRecordDto.getBorrowDate()
+                borrowRecordDto.getBookCopy()
         );
     }
-        public BorrowRecordDto mapToBorrowRecordDto(final BorrowRecord borrowRecord) {
-            return new BorrowRecordDto(
-                    borrowRecord.getBorrowId(),
-                    borrowRecord.getUser(),
-                    borrowRecord.getBookCopy(),
-                    borrowRecord.getBorrowDate(),
-                    borrowRecord.getBorrowDate()
-            );
+
+    public BorrowRecordDto mapToBorrowRecordDto(final BorrowRecord borrowRecord) {
+        return new BorrowRecordDto(
+                borrowRecord.getUser(),
+                borrowRecord.getBookCopy()
+        );
     }
 }

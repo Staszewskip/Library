@@ -1,15 +1,13 @@
 package com.crud.library.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @NoArgsConstructor
-@RequiredArgsConstructor
 @Getter
 @Entity
 public class BorrowRecord {
@@ -19,22 +17,31 @@ public class BorrowRecord {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_ID")
-    @NonNull
     private User user;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @NonNull
+    @JoinColumn(name = "BOOKCOPY_ID")
     private BookCopy bookCopy;
 
     @Column
-    @NonNull
     private LocalDate borrowDate;
 
     @Column
     private LocalDate returnDate;
 
+    public BorrowRecord(User user, BookCopy bookCopy) {
+        this.user = user;
+        this.bookCopy = bookCopy;
+        this.borrowDate = LocalDate.now();
+    }
+
     public void setReturnDate(LocalDate returnDate) {
         this.returnDate = returnDate;
     }
-
+    public void setUser(User user) {
+        this.user = user;
+    }
+    public void setBookCopy(BookCopy bookCopy) {
+        this.bookCopy = bookCopy;
+    }
 }

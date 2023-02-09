@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
+
 @NoArgsConstructor
 @Getter
 @Entity(name = "BOOKS")
@@ -30,4 +30,10 @@ public class Book {
 
     @Column
     private int year;
+
+    public Book(String title, String author, int year) {
+        this.title = title;
+        this.author = author;
+        this.year = year;
+    }
 }

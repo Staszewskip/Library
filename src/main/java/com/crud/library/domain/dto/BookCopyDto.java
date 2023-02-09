@@ -7,13 +7,18 @@ import lombok.Getter;
 
 import java.util.List;
 
-@AllArgsConstructor
+
 @Getter
 public class BookCopyDto {
     private long bookCopyId;
     private Book book;
     private BorrowRecord borrowId;
     private String status;
+
+    public BookCopyDto(Book book) {
+        this.book = book;
+        this.status = "available";
+    }
 }
 
 

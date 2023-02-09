@@ -39,24 +39,25 @@ public class DbService {
         bookCopy.setStatus(status);
     }
 
-    public long getNbOfCopies(Book book, String bookCopyStatus){
+    public long getNbOfCopies(Book book, String bookCopyStatus) {
         List<BookCopy> bookCopyTitles = book.getBookCopyList();
-        return  bookCopyTitles.stream()
-                .filter(status ->status.getStatus().equals(bookCopyStatus))
+        return bookCopyTitles.stream()
+                .filter(status -> status.getStatus().equals(bookCopyStatus))
                 .count();
     }
 
     public void borrowBook(User user, BookCopy bookCopy) {
-        BorrowRecord borrowRecord = new BorrowRecord(user, bookCopy, LocalDate.now());
+        BorrowRecord borrowRecord = new BorrowRecord(user, bookCopy);
         borrowRecordRepository.save(borrowRecord);
         bookCopy.setStatus("borrowed");
+        bookCopyRepository.save(bookCopy);
     }
-
 
     public void returnBook(BorrowRecord borrowRecord) {
         borrowRecord.setReturnDate(LocalDate.now());
         BookCopy bookCopy = borrowRecord.getBookCopy();
         bookCopy.setStatus("returned");
+        bookCopyRepository.save(bookCopy);
     }
 
 }

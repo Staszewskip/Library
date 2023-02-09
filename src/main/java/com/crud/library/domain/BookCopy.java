@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
+
 @NoArgsConstructor
 @Getter
 @Entity
@@ -19,12 +19,13 @@ public class BookCopy {
     @JoinColumn(name = "BOOK_ID")
     private Book book;
 
-    @ManyToOne
-    @JoinColumn(name = "BORROW_ID")
-    private BorrowRecord borrowId;
-
     @Column
     private String status;
+
+    public BookCopy(Book book) {
+        this.book = book;
+        this.status = "available";
+    }
 
     public void setStatus(String status) {
         this.status = status;

@@ -1,13 +1,11 @@
 package com.crud.library.domain.dto;
 
 import com.crud.library.domain.BookCopy;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
+
 @Getter
 
 public class BookDto {
@@ -16,6 +14,12 @@ public class BookDto {
     private String title;
     private String author;
     private int year;
+
+    public BookDto(String title, String author, int year) {
+        this.title = title;
+        this.author = author;
+        this.year = year;
+    }
 }
 
 

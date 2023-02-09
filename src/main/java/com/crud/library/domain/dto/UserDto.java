@@ -4,12 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
-@AllArgsConstructor
+
 @Getter
 public class UserDto {
 
     private long userId;
-    private String firstname;
-    private String lastname;
+    private String firstName;
+    private String lastName;
     private LocalDate registrationDate;
+
+    public UserDto(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.registrationDate = LocalDate.now();
+    }
+
 }

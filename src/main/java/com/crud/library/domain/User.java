@@ -8,24 +8,29 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@AllArgsConstructor
+
 @NoArgsConstructor
 @Getter
-@Entity(name = "users")
-@Table
+@Entity
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue
     private long userId;
 
     @Column
-    private String firstname;
+    private String firstName;
 
     @Column
-    private String lastname;
+    private String lastName;
 
     @Column
     private LocalDate registrationDate;
 
+    public User(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.registrationDate = LocalDate.now();
+    }
 
 }
