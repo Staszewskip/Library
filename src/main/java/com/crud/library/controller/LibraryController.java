@@ -11,6 +11,7 @@ import com.crud.library.mapper.LibraryMapper;
 import com.crud.library.service.DbService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin("*")
@@ -22,42 +23,48 @@ public class LibraryController {
     private final DbService dbService;
 
     @PostMapping(value = "/addUser", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void addUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<Void> addUser(@RequestBody UserDto userDto) {
         User user = libraryMapper.mapToUser(userDto);
         dbService.saveUser(user);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/addBook", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void addBook(@RequestBody BookDto bookDto) {
+    public ResponseEntity<Void> addBook(@RequestBody BookDto bookDto) {
         Book book = libraryMapper.mapToBook(bookDto);
         dbService.saveBook(book);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/addBookCopy", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void addBookCopy(@RequestBody BookCopyDto bookCopyDto) {
+    public ResponseEntity<Void> addBookCopy(@RequestBody BookCopyDto bookCopyDto) {
         BookCopy bookCopy = libraryMapper.mapToBookCopy(bookCopyDto);
         dbService.saveBookCopy(bookCopy);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/changeBookCopyStatus")
-    public void changeBookCopyStatus(@RequestParam BookCopyDto bookCopyDto, @RequestParam String status) {
+    public ResponseEntity<Void>changeBookCopyStatus(@RequestParam BookCopyDto bookCopyDto, @RequestParam String status) {
         BookCopy bookCopy = libraryMapper.mapToBookCopy(bookCopyDto);
         dbService.changeBookCopyStatus(bookCopy, status);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/getNbOfBookCopies")
-    public long getNbOfBookCopies(@RequestParam BookDto bookDto, @RequestParam String bookCopyStatus) {
+    public ResponseEntity<Long> getNbOfBookCopies(@RequestParam BookDto bookDto, @RequestParam String bookCopyStatus) {
         Book bookTitle = libraryMapper.mapToBook(bookDto);
-        return dbService.getNbOfCopies(bookTitle,bookCopyStatus);
+        return ResponseEntity.ok(dbService.getNbOfCopies(bookTitle,bookCopyStatus));
     }
 
     @PostMapping(value = "/borrowBook")
-    public void borrowBook(@RequestParam BookCopyDto bookCopyId, @RequestParam UserDto userId) {
+    public ResponseEntity<Void> borrowBook(@RequestParam BookCopyDto bookCopyId, @RequestParam UserDto userId) {
         dbService.borrowBook(libraryMapper.mapToUser(userId), libraryMapper.mapToBookCopy(bookCopyId));
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/returnBook")
-    public void returnBook(@RequestParam BorrowRecordDto borrowRecordDto) {
+    public ResponseEntity<Void> returnBook(@RequestParam BorrowRecordDto borrowRecordDto) {
         dbService.returnBook(libraryMapper.mapToBorrowRecord(borrowRecordDto));
+        return ResponseEntity.ok().build();
     }
 }
