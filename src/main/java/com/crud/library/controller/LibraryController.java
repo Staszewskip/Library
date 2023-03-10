@@ -51,10 +51,10 @@ public class LibraryController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "getNbOfBookCopies")
-    public ResponseEntity<Long> getNbOfBookCopies(@RequestParam BookDto bookDto, @RequestParam String bookCopyStatus) {
+    @GetMapping()
+    public ResponseEntity<Long> getNbOfBookCopies(@RequestParam BookDto bookDto) {
         Book book = libraryMapper.mapToBook(bookDto);
-        return ResponseEntity.ok(dbService.getNbOfCopies(book,bookCopyStatus));
+        return ResponseEntity.ok(dbService.getNbOfAvailBookCopies(book.getTitle()));
     }
 
     @PostMapping(value = "borrowBook")

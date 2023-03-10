@@ -97,23 +97,24 @@ class RepositoryTestSuite {
         bookRepository.deleteById(bookId);
     }
 
-        @Test
-    void testGetNumberOfBookCopies() {
+    @Test
+    void testGetNbOfAvailBookCopies() {
 //        Given
         Book book = new Book("Harry Potter", "J.K Rowling", 2000);
         BookCopy bookCopy = new BookCopy(book);
 //        When
         bookRepository.save(book);
         bookCopyRepository.save(bookCopy);
-        long bookCopyId = bookCopy.getBookCopyId();
-        long bookId = book.getBookId();
+        Long bookCopyId = bookCopy.getBookCopyId();
+        Long bookId = book.getBookId();
 //         Then
-        dbService.getNbOfCopies(book,"available");
-        Assertions.assertEquals(1,book.getBookCopyList().size());
+        Long qty = dbService.getNbOfAvailBookCopies(book.getTitle());
+        Assertions.assertEquals(1, qty);
 //        CleanUp
         bookCopyRepository.deleteById(bookCopyId);
         bookRepository.deleteById(bookId);
     }
+
     @Test
     void testBorrowBook() {
 //        Given
@@ -133,13 +134,14 @@ class RepositoryTestSuite {
         long bookId = book.getBookId();
 
 //         Then
-        dbService.borrowBook(user,bookCopy);
-        Assertions.assertEquals("borrowed",bookCopy.getStatus());
+        dbService.borrowBook(user, bookCopy);
+        Assertions.assertEquals("borrowed", bookCopy.getStatus());
 //        CleanUp
         userRepository.deleteById(userId);
         bookCopyRepository.deleteById(bookCopyId);
         bookRepository.deleteById(bookId);
     }
+
     @Test
     void testReturnBook() {
 //        Given

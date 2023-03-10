@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,11 +37,8 @@ public class DbService {
         bookCopy.setStatus(status);
     }
 
-    public long getNbOfCopies(Book book, String bookCopyStatus) {
-        List<BookCopy> bookCopyTitles = book.getBookCopyList();
-        return bookCopyTitles.stream()
-                .filter(status -> status.getStatus().equals(bookCopyStatus))
-                .count();
+    public long getNbOfAvailBookCopies(String title) {
+        return bookCopyRepository.nbOfAvailBookCopies(title);
     }
 
     public void borrowBook(User user, BookCopy bookCopy) {

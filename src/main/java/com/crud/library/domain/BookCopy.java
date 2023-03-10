@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
+@NamedQuery(name = "BookCopy.nbOfAvailBookCopies",
+        query = "SELECT COUNT(*) FROM BookCopy WHERE status='available' and book.title=:title"
+)
 @NoArgsConstructor
 @Getter
 @Entity
