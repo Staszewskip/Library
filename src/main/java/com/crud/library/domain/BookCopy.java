@@ -1,6 +1,7 @@
 package com.crud.library.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,15 +13,17 @@ import lombok.NoArgsConstructor;
 @Table(name = "BOOK_COPIES")
 public class BookCopy {
     @Id
-    @GeneratedValue
-    private long bookCopyId;
+    @NotNull
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="BOOKCOPY_ID", unique=true)
+    public Long bookCopyId;
 
     @ManyToOne
     @JoinColumn(name = "BOOK_ID")
-    private Book book;
+    public Book book;
 
-    @Column
-    private String status;
+    @Column(name = "STATUS")
+    public String status;
 
     public BookCopy(Book book) {
         this.book = book;
