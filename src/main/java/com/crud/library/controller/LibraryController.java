@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin("*")
 @RestController
 @RequestMapping("v1/library")
@@ -50,8 +52,17 @@ public class LibraryController {
         dbService.changeBookCopyStatus(bookCopy, status);
         return ResponseEntity.ok().build();
     }
-
     @GetMapping()
+    public ResponseEntity<List<BookDto>> getBooks() {
+        List<Book> bookList = dbService.showAllBooks()  ;
+        return ResponseEntity.ok(libraryMapper.mapToBookDtoList(bookList));
+    }
+    @GetMapping(value = {"bookCopy"})
+    public ResponseEntity<List<BookCopyDto>> getBookCopy() {
+        List<BookCopy> bookCopyList = dbService.showAllBookCopies();
+        return ResponseEntity.ok(libraryMapper.mapToBookCopyDtoList(bookCopyList));
+    }
+    @GetMapping(value = {"bookId"})
     public ResponseEntity<Long> getNbOfBookCopies(@RequestParam BookDto bookDto) {
         Book book = libraryMapper.mapToBook(bookDto);
         return ResponseEntity.ok(dbService.getNbOfAvailBookCopies(book.getTitle()));

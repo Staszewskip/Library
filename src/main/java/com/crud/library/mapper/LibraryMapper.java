@@ -10,6 +10,9 @@ import com.crud.library.domain.dto.BorrowRecordDto;
 import com.crud.library.domain.dto.UserDto;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class LibraryMapper {
     public User mapToUser(final UserDto userDto) {
@@ -34,8 +37,8 @@ public class LibraryMapper {
         );
     }
 
-    public Book mapToBookDto(final Book book) {
-        return new Book(
+    public BookDto mapToBookDto(final Book book) {
+        return new BookDto(
                 book.getTitle(),
                 book.getAuthor(),
                 book.getYear()
@@ -48,7 +51,7 @@ public class LibraryMapper {
         );
     }
 
-    public BookCopyDto mapToBookCopy(final BookCopy bookCopy) {
+    public BookCopyDto mapToBookCopyDto(final BookCopy bookCopy) {
         return new BookCopyDto(
                 bookCopy.getBook()
         );
@@ -66,5 +69,16 @@ public class LibraryMapper {
                 borrowRecord.getUser(),
                 borrowRecord.getBookCopy()
         );
+    }
+
+    public List<BookDto> mapToBookDtoList(List<Book> bookList) {
+        return bookList.stream()
+                .map(this::mapToBookDto)
+                .collect(Collectors.toList());
+    }
+    public List<BookCopyDto> mapToBookCopyDtoList(List<BookCopy> bookCopyList) {
+        return bookCopyList.stream()
+                .map(this::mapToBookCopyDto)
+                .collect(Collectors.toList());
     }
 }

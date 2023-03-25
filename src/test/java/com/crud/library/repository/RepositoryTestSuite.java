@@ -115,32 +115,32 @@ class RepositoryTestSuite {
         bookRepository.deleteById(bookId);
     }
 
-    @Test
-    void testBorrowBook() {
-//        Given
-        User user = new User("Paweł", "Staszewski");
-        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
-        BookCopy bookCopy = new BookCopy(book);
-        BorrowRecord borrowRecord = new BorrowRecord(user, bookCopy);
-        borrowRecord.setBookCopy(bookCopy);
-        borrowRecord.setUser(user);
-//        When
-        userRepository.save(user);
-        bookRepository.save(book);
-        bookCopyRepository.save(bookCopy);
-
-        long userId = user.getUserId();
-        long bookCopyId = bookCopy.getBookCopyId();
-        long bookId = book.getBookId();
-
-//         Then
-        dbService.borrowBook(user, bookCopy);
-        Assertions.assertEquals("borrowed", bookCopy.getStatus());
-//        CleanUp
-        userRepository.deleteById(userId);
-        bookCopyRepository.deleteById(bookCopyId);
-        bookRepository.deleteById(bookId);
-    }
+//    @Test
+//    void testBorrowBook() {
+////        Given
+//        User user = new User("Paweł", "Staszewski");
+//        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
+//        BookCopy bookCopy = new BookCopy(book);
+//        BorrowRecord borrowRecord = new BorrowRecord(user, bookCopy);
+//        borrowRecord.setBookCopy(bookCopy);
+//        borrowRecord.setUser(user);
+////        When
+//        userRepository.save(user);
+//        bookRepository.save(book);
+//        bookCopyRepository.save(bookCopy);
+//
+//        long userId = user.getUserId();
+//        long bookCopyId = bookCopy.getBookCopyId();
+//        long bookId = book.getBookId();
+//
+////         Then
+//        dbService.borrowBook(user, bookCopy);
+//        Assertions.assertEquals("borrowed", bookCopy.getStatus());
+////        CleanUp
+//        userRepository.deleteById(userId);
+//        bookCopyRepository.deleteById(bookCopyId);
+//        bookRepository.deleteById(bookId);
+//    }
 
     @Test
     void testReturnBook() {

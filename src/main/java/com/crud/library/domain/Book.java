@@ -1,5 +1,7 @@
 package com.crud.library.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -24,7 +26,8 @@ public class Book {
             mappedBy = "book",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    public List<BookCopy> bookCopyList = new ArrayList<>();
+    @JsonIgnore
+    public List<BookCopy> bookCopyList;
 
     @Column(name = "TITLE")
     public String title;

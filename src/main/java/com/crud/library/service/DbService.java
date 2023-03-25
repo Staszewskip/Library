@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +32,13 @@ public class DbService {
 
     public BookCopy saveBookCopy(final BookCopy bookCopy) {
         return bookCopyRepository.save(bookCopy);
+    }
+
+    public List<Book> showAllBooks() {
+        return bookRepository.findAll();
+    }
+    public List<BookCopy> showAllBookCopies() {
+        return bookCopyRepository.findAll();
     }
 
     public void changeBookCopyStatus(final BookCopy bookCopy, String status) {

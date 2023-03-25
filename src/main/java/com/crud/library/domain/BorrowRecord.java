@@ -3,12 +3,14 @@ package com.crud.library.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity
 public class BorrowRecord {
     @Id
@@ -33,15 +35,5 @@ public class BorrowRecord {
         this.user = user;
         this.bookCopy = bookCopy;
         this.borrowDate = LocalDate.now();
-    }
-
-    public void setReturnDate(LocalDate returnDate) {
-        this.returnDate = returnDate;
-    }
-    public void setUser(User user) {
-        this.user = user;
-    }
-    public void setBookCopy(BookCopy bookCopy) {
-        this.bookCopy = bookCopy;
     }
 }
