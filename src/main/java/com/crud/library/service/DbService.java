@@ -1,18 +1,20 @@
 package com.crud.library.service;
 
-import com.crud.library.domain.Book;
-import com.crud.library.domain.BookCopy;
-import com.crud.library.domain.BorrowRecord;
-import com.crud.library.domain.User;
+import com.crud.library.domain.*;
 import com.crud.library.repository.BookCopyRepository;
 import com.crud.library.repository.BookRepository;
 import com.crud.library.repository.BorrowRecordRepository;
 import com.crud.library.repository.UserRepository;
+import exception.BookCopyNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+
+import static com.crud.library.domain.BookCopyStatus.AVAILABLE;
+import static com.crud.library.domain.BookCopyStatus.RENTED;
 
 @Service
 @RequiredArgsConstructor
@@ -30,18 +32,27 @@ public class DbService {
         return bookRepository.save(book);
     }
 
-    public BookCopy saveBookCopy(final BookCopy bookCopy) {
+    public BookCopy saveBookCopy(final Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new IllegalStateException(" book with id " + bookId + " not found"));
+        BookCopy bookCopy = new BookCopy(bookId, book);
         return bookCopyRepository.save(bookCopy);
     }
 
     public List<Book> showAllBooks() {
         return bookRepository.findAll();
     }
+
     public List<BookCopy> showAllBookCopies() {
         return bookCopyRepository.findAll();
     }
 
-    public void changeBookCopyStatus(final BookCopy bookCopy, String status) {
+    public List<User> showAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public void changeBookCopyStatus(final Long bookCopyId, BookCopyStatus status) throws BookCopyNotFoundException {
+        BookCopy bookCopy = bookCopyRepository.findById(bookCopyId).orElseThrow(BookCopyNotFoundException::new);
         bookCopy.setStatus(status);
     }
 
@@ -49,18 +60,30 @@ public class DbService {
         return bookCopyRepository.nbOfAvailBookCopies(title);
     }
 
-    public void borrowBook(User user, BookCopy bookCopy) {
-        BorrowRecord borrowRecord = new BorrowRecord(user, bookCopy);
+    public List<BorrowRecord> showAllBorrowsByUser(Long userId) {
+        return borrowRecordRepository.findByUserId(userId);
+    }
+
+    public void borrowBook(Long borrowId, Long userId, Long bookCopyId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        User user = optionalUser.get();
+        Optional<BookCopy> optionalBookCopy = bookCopyRepository.findById(bookCopyId);
+        BookCopy bookCopy = optionalBookCopy.get();
+
+        BorrowRecord borrowRecord = new BorrowRecord(borrowId, user, bookCopy);
         borrowRecordRepository.save(borrowRecord);
-        bookCopy.setStatus("borrowed");
+        bookCopy.setStatus(RENTED);
         bookCopyRepository.save(bookCopy);
     }
 
-    public void returnBook(BorrowRecord borrowRecord) {
+    public void returnBook(Long borrowRecordId) {
+        Optional<BorrowRecord> optionalBorrowRecord = borrowRecordRepository.findById(borrowRecordId);
+        BorrowRecord borrowRecord = optionalBorrowRecord.get();
+
         borrowRecord.setReturnDate(LocalDate.now());
         BookCopy bookCopy = borrowRecord.getBookCopy();
-        bookCopy.setStatus("returned");
+
+        bookCopy.setStatus(AVAILABLE);
         bookCopyRepository.save(bookCopy);
     }
-
 }

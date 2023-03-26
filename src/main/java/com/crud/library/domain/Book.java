@@ -1,10 +1,6 @@
 package com.crud.library.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,28 +13,28 @@ import java.util.List;
 @Entity(name = "BOOKS")
 public class Book {
     @Id
-    @NotNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="BOOK_ID", unique=true)
-    public Long bookId;
+    @GeneratedValue
+    private Long bookId;
 
-    @OneToMany(targetEntity = BookCopy.class,
+    @OneToMany(
+            targetEntity = BookCopy.class,
             mappedBy = "book",
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    @JsonIgnore
-    public List<BookCopy> bookCopyList;
+            fetch = FetchType.LAZY
+    )
+    private List<BookCopy> bookCopyList = new ArrayList<>();
 
     @Column(name = "TITLE")
-    public String title;
+    private String title;
 
     @Column(name = "AUTHOR")
-    public String author;
+    private String author;
 
     @Column(name = "YEAR")
-    public int year;
+    private int year;
 
-    public Book(String title, String author, int year) {
+    public Book(Long bookId, String title, String author, int year) {
+        this.bookId = bookId;
         this.title = title;
         this.author = author;
         this.year = year;

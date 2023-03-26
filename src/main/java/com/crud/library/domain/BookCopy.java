@@ -1,16 +1,18 @@
 package com.crud.library.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import static com.crud.library.domain.BookCopyStatus.AVAILABLE;
+
 @NamedQuery(name = "BookCopy.nbOfAvailBookCopies",
-        query = "SELECT COUNT(*) FROM BookCopy WHERE status='available' and book.title=:title"
+        query = "SELECT COUNT(*) FROM BookCopy WHERE status= 'AVAILABLE' and book.title= :title"
 )
 @NoArgsConstructor
 @Getter
@@ -19,20 +21,22 @@ import lombok.Setter;
 @Table(name = "BOOK_COPIES")
 public class BookCopy {
     @Id
-    @NotNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "BOOKCOPY_ID", unique = true)
-    public Long bookCopyId;
+    @GeneratedValue
+    @Column(name = "BOOK_COPY_ID")
+    private Long bookCopyId;
 
+    @NotNull
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "BOOK_ID")
-    public Book book;
+    private Book book;
 
     @Column(name = "STATUS")
-    public String status;
+    private BookCopyStatus status;
 
-    public BookCopy(Book book) {
+    public BookCopy(Long bookCopyId, Book book) {
+        this.bookCopyId = bookCopyId;
         this.book = book;
-        this.status = "available";
+        this.status = BookCopyStatus.valueOf(AVAILABLE.getStatus());
     }
 }

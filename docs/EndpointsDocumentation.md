@@ -6,15 +6,11 @@
 
 ### Body:
 ```
-[
-    {
-        "bookId": 0,
-        "bookCopyList": null,
-        "title": "Harry Potter",
-        "author": "Joanne",
-        "year": 2000
-    }
-]
+{
+    "title" : "J.K Rowling",
+    "author" : "Harry Potter",
+    "year" : 2000
+}
 ```
 
 ### Returns:
@@ -22,7 +18,6 @@
 
 Example:
 ```
-[
     {
         "bookId": 0,
         "bookCopyList": null,
@@ -30,7 +25,6 @@ Example:
         "author": "Joanne",
         "year": 2000
     }
-]
 ```
 ## Add book copy
 ### HTTP Request:
@@ -90,3 +84,17 @@ Example:
     }
 ]
 ```
+## Add user
+### HTTP Request:
+`POST /v1//addUser
+### Body:
+Example
+```
+    {
+        "firstName" : "userName",
+        "lastName": "userLastName"
+    }
+```
+### Returns:
+empty **JSON**
+

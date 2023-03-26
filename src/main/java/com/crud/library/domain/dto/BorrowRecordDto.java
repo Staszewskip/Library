@@ -25,10 +25,10 @@ public class BorrowRecordDto {
 
     private LocalDate returnDate;
 
-    public BorrowRecordDto(User user, BookCopy bookCopy) {
+    public BorrowRecordDto(Long borrowId,User user, BookCopy bookCopy) {
+        this.borrowId = borrowId;
         this.user = user;
         this.bookCopy = bookCopy;
         this.borrowDate = LocalDate.now();
     }
-
 }
