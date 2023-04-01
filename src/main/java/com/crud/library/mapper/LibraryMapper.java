@@ -23,11 +23,11 @@ public class LibraryMapper {
 
     public User mapToUser(final UserDto userDto) {
         return new User(
-                userDto.getUserId(),
                 userDto.getFirstName(),
                 userDto.getLastName()
         );
     }
+
     public UserDto mapToUserDto(final User user) {
         return new UserDto(
                 user.getUserId(),
@@ -35,9 +35,9 @@ public class LibraryMapper {
                 user.getLastName()
         );
     }
+
     public Book mapToBook(final BookDto bookDto) {
         return new Book(
-                bookDto.getBookId(),
                 bookDto.getTitle(),
                 bookDto.getAuthor(),
                 bookDto.getYear()
@@ -55,7 +55,6 @@ public class LibraryMapper {
 
     public BookCopy mapToBookCopy(final Long bookCopyId) throws BookNotFoundException {
         return new BookCopy(
-                bookCopyId,
                 bookRepository.findById(bookCopyId).orElseThrow(BookNotFoundException::new)
         );
     }
@@ -63,8 +62,7 @@ public class LibraryMapper {
     public BookCopyDto mapToBookCopyDto(final BookCopy bookCopy) {
         return new BookCopyDto(
                 bookCopy.getBookCopyId(),
-                bookCopy.getBookCopyId()
-        );
+                bookCopy.getBook().getBookId());
     }
 
     public BorrowRecordDto mapToBorrowRecordDto(final BorrowRecord borrowRecord) {

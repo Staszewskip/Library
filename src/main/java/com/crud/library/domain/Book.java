@@ -1,5 +1,7 @@
 package com.crud.library.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +12,12 @@ import java.util.List;
 
 @NoArgsConstructor
 @Getter
-@Entity(name = "BOOKS")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "bookId")
+@Entity
+@Table(name = "books")
 public class Book {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookId;
 
     @OneToMany(
@@ -22,19 +26,18 @@ public class Book {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
-    private List<BookCopy> bookCopyList = new ArrayList<>();
+    private final List<BookCopy> bookCopyList = new ArrayList<>();
 
-    @Column(name = "TITLE")
+    @Column(name = "title")
     private String title;
 
-    @Column(name = "AUTHOR")
+    @Column(name = "author")
     private String author;
 
-    @Column(name = "YEAR")
+    @Column(name = "year")
     private int year;
 
-    public Book(Long bookId, String title, String author, int year) {
-        this.bookId = bookId;
+    public Book(String title, String author, int year) {
         this.title = title;
         this.author = author;
         this.year = year;

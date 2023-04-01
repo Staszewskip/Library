@@ -1,4 +1,4 @@
 package exception;
 
-public class BookCopyNotFoundException extends Exception{
+public class BookCopyNotFoundException extends Exception {
 }

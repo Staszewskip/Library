@@ -1,13 +1,15 @@
 package com.crud.library.controller;
 
-import com.crud.library.domain.*;
+import com.crud.library.domain.BookCopyStatus;
 import com.crud.library.domain.dto.BookCopyDto;
 import com.crud.library.domain.dto.BookDto;
 import com.crud.library.domain.dto.BorrowRecordDto;
 import com.crud.library.domain.dto.UserDto;
-import com.crud.library.mapper.LibraryMapper;
 import com.crud.library.service.DbService;
 import exception.BookCopyNotFoundException;
+import exception.BookNotFoundException;
+import exception.BorrowRecordNotFoundException;
+import exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,48 +22,44 @@ import java.util.List;
 @RequestMapping("v1/library")
 @RequiredArgsConstructor
 public class LibraryController {
-    private final LibraryMapper libraryMapper;
+
     private final DbService dbService;
 
     @PostMapping(value = "addUser", consumes = MediaType.APPLICATION_JSON_VALUE) //działa
     public ResponseEntity<Void> addUser(@RequestBody UserDto userDto) {
-        User user = libraryMapper.mapToUser(userDto);
-        dbService.saveUser(user);
+        dbService.saveUser(userDto);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "addBook", consumes = MediaType.APPLICATION_JSON_VALUE) //działa
     public ResponseEntity<Void> addBook(@RequestBody BookDto bookDto) {
-        Book book = libraryMapper.mapToBook(bookDto);
-        dbService.saveBook(book);
+        dbService.saveBook(bookDto);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "addBookCopy/{bookId}") // działa, ale nie pozwala dodać kilku kopii do jednej książki
-    public ResponseEntity<Void> addBookCopy(@PathVariable Long bookId) {
+    @PostMapping(value = "addBookCopy/{bookId}") //działa
+    public ResponseEntity<Void> addBookCopy(@PathVariable Long bookId) throws BookNotFoundException {
         dbService.saveBookCopy(bookId);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "changeBookCopyStatus/{bookCopyId}") //nie rozpoznaje statusu z enuma
+    @PostMapping(value = "changeBookCopyStatus/{bookCopyId}") // JSON parse error: Cannot deserialize value of type `com.crud.library.domain.BookCopyStatus` from Object value
     public ResponseEntity<Void> changeBookCopyStatus(@PathVariable Long bookCopyId, @RequestBody BookCopyStatus status) throws BookCopyNotFoundException {
         dbService.changeBookCopyStatus(bookCopyId, status);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping() //działa, ale nie ma linku z listą BookCopy
+    @GetMapping() //działa, ale lista BookCopy jest pusta
     public ResponseEntity<List<BookDto>> getBooks() {
-        List<Book> bookList = dbService.showAllBooks();
-        return ResponseEntity.ok(libraryMapper.mapToBookDtoList(bookList));
+        return ResponseEntity.ok(dbService.showAllBooks());
     }
 
     @GetMapping(value = {"bookCopy"}) //działa
     public ResponseEntity<List<BookCopyDto>> getBookCopy() {
-        List<BookCopy> bookCopyList = dbService.showAllBookCopies();
-        return ResponseEntity.ok(libraryMapper.mapToBookCopyDtoList(bookCopyList));
+        return ResponseEntity.ok(dbService.showAllBookCopies());
     }
 
-    @GetMapping(value = {"title"}) //nie odczytuje Stringa z pola w enummie
+    @GetMapping(value = {"title"}) //pokazuje 0, chociaż są dodane ksiązki. Test działa
     public ResponseEntity<Long> getNbOfBookCopies(@RequestParam String title) {
         Long nbOfAvailCopies = dbService.getNbOfAvailBookCopies(title);
         return ResponseEntity.ok(nbOfAvailCopies);
@@ -69,25 +67,22 @@ public class LibraryController {
 
     @GetMapping(value = {"users"}) //działa
     public ResponseEntity<List<UserDto>> getUsers() {
-        List<User> userList = dbService.showAllUsers();
-        return ResponseEntity.ok(libraryMapper.mapToUserDtoList(userList));
+        return ResponseEntity.ok(dbService.showAllUsers());
     }
 
-    @PostMapping(value = "borrowBook")//czy Optional jest dobrze? Jakaś obsługa błędów?
-    public ResponseEntity<Void> borrowBook(@RequestParam Long borrowRecordId, @RequestParam Long userId, @RequestParam Long bookCopyId) {
-        dbService.borrowBook(borrowRecordId, userId, bookCopyId);
+    @PostMapping(value = "borrowBook")//działa, ale wyłapuje wyjątków
+    public ResponseEntity<Void> borrowBook(@RequestParam Long userId, @RequestParam Long bookCopyId) throws UserNotFoundException, BookCopyNotFoundException {
+        dbService.borrowBook(userId, bookCopyId);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "borrowsByUser/{userId}") //działa, ale książki mają zawsze status available
-    public ResponseEntity<List<BorrowRecordDto>> getBorrowedBooksByUser(@PathVariable Long userId) {
-        List<BorrowRecord> borrowRecordList = dbService.showAllBorrowsByUser(userId);
-        return ResponseEntity.ok(libraryMapper.mapToBorrowRecordDtoList(borrowRecordList));
+    @GetMapping(value = "borrowsByUser/{userId}") //działa, ale jest zapętlona serializacja
+    public ResponseEntity<List<BorrowRecordDto>> getBorrowedBooksByUser(@PathVariable Long userId) throws UserNotFoundException {
+        return ResponseEntity.ok(dbService.showAllBorrowsByUser(userId));
     }
 
-    @PostMapping(value = "returnBook/{borrowRecordId}")
-    //działa - dodaje się data zwrotu, ale nie zmienia się status na avaible
-    public ResponseEntity<Void> returnBook(@PathVariable Long borrowRecordId) {
+    @PostMapping(value = "returnBook/{borrowRecordId}")//działa, ale wyłapuje wyjątków
+    public ResponseEntity<Void> returnBook(@PathVariable Long borrowRecordId) throws BorrowRecordNotFoundException {
         dbService.returnBook(borrowRecordId);
         return ResponseEntity.ok().build();
     }

@@ -1,8 +1,9 @@
 package com.crud.library.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,12 +16,12 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 @Entity
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue
-    @JsonProperty("userId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
     @Column
@@ -39,11 +40,10 @@ public class User {
             fetch = FetchType.LAZY,
             orphanRemoval = true
     )
-    @JsonBackReference("borrowReference")
+    @JsonManagedReference
     private List<BorrowRecord> borrowRecordList = new ArrayList<>();
 
-    public User(Long userId, String firstName, String lastName) {
-        this.userId = userId;
+    public User(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.registrationDate = LocalDate.now();

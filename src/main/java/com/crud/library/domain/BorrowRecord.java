@@ -17,20 +17,20 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "borrowId")
 @Entity
 public class BorrowRecord {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long borrowId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "userId")
+    @JsonBackReference
     private User user;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "BOOKCOPY_ID")
-    @JsonBackReference
+    @JoinColumn(name = "book_copy_id")
     private BookCopy bookCopy;
 
     @Column
@@ -39,10 +39,13 @@ public class BorrowRecord {
     @Column
     private LocalDate returnDate;
 
-    public BorrowRecord(Long borrowId,User user, BookCopy bookCopy) {
-        this.borrowId = borrowId;
+    @Column
+    private boolean isReturned;
+
+    public BorrowRecord(User user, BookCopy bookCopy) {
         this.user = user;
         this.bookCopy = bookCopy;
         this.borrowDate = LocalDate.now();
+        this.isReturned = false;
     }
 }

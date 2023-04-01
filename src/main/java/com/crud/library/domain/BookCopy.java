@@ -1,10 +1,8 @@
 package com.crud.library.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,26 +15,25 @@ import static com.crud.library.domain.BookCopyStatus.AVAILABLE;
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "bookCopyId")
 @Entity
-@Table(name = "BOOK_COPIES")
+@Table(name = "book_copies")
 public class BookCopy {
     @Id
-    @GeneratedValue
-    @Column(name = "BOOK_COPY_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "book_copy_id")
     private Long bookCopyId;
 
-    @NotNull
-    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "BOOK_ID")
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    @Column(name = "STATUS")
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
     private BookCopyStatus status;
 
-    public BookCopy(Long bookCopyId, Book book) {
-        this.bookCopyId = bookCopyId;
+    public BookCopy(Book book) {
         this.book = book;
-        this.status = BookCopyStatus.valueOf(AVAILABLE.getStatus());
+        this.status = AVAILABLE;
     }
 }

@@ -2,13 +2,17 @@ package com.crud.library.repository;
 
 import com.crud.library.domain.*;
 import com.crud.library.service.DbService;
+import exception.BookCopyNotFoundException;
+import exception.BorrowRecordNotFoundException;
+import exception.UserNotFoundException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
-import static com.crud.library.domain.BookCopyStatus.*;
+import static com.crud.library.domain.BookCopyStatus.AVAILABLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,7 +35,7 @@ class RepositoryTestSuite {
     @Test
     void testAddUser() {
 //given
-        User user = new User(0L,"Paweł", "Staszewski");
+        User user = new User("Paweł", "Staszewski");
 //    when
         userRepository.save(user);
 //    then
@@ -46,7 +50,7 @@ class RepositoryTestSuite {
     @Test
     void testAddBook() {
 //        Given
-        Book book = new Book(1L,"Harry Potter", "J.K Rowling", 2000);
+        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
 //        When
         bookRepository.save(book);
         long id = book.getBookId();
@@ -60,7 +64,7 @@ class RepositoryTestSuite {
     @Test
     void testAddBookCopy() {
 //        Given
-        Book book = new Book(1L,"Harry Potter", "J.K Rowling", 2000);
+        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
         BookCopy bookCopy = new BookCopy(book);
 //     When
         bookRepository.save(book);
@@ -69,7 +73,6 @@ class RepositoryTestSuite {
         long bookId = book.getBookId();
 
 //        Then
-
         Optional<BookCopy> readBookCopy = bookCopyRepository.findById(bookCopyId);
         assertTrue(readBookCopy.isPresent());
 //        CleanUp
@@ -77,94 +80,90 @@ class RepositoryTestSuite {
         bookRepository.deleteById(bookId);
     }
 
-//    @Test
-//    void testChangeBookCopyStatus() {
-////        Given
-//        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
-//        BookCopy bookCopy = new BookCopy(book);
-////        When
-//        bookRepository.save(book);
-//        bookCopyRepository.save(bookCopy);
-//        long bookCopyId = bookCopy.getBookCopyId();
-//        long bookId = book.getBookId();
-////         Then
-//        dbService.changeBookCopyStatus(bookCopy, AVAILABLE);
-//        assertEquals(AVAILABLE, bookCopy.getStatus());
-////        CleanUp
-//        bookCopyRepository.deleteById(bookCopyId);
-//        bookRepository.deleteById(bookId);
-//    }
+    @Test
+    void testChangeBookCopyStatus() throws BookCopyNotFoundException {
+//        Given
+        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
+        BookCopy bookCopy = new BookCopy(book);
+//        When
+        bookRepository.save(book);
+        bookCopyRepository.save(bookCopy);
+        long bookCopyId = bookCopy.getBookCopyId();
+        long bookId = book.getBookId();
+//         Then
+        dbService.changeBookCopyStatus(bookCopyId, AVAILABLE);
+        assertEquals(AVAILABLE, bookCopy.getStatus());
+//        CleanUp
+        bookCopyRepository.deleteById(bookCopyId);
+        bookRepository.deleteById(bookId);
+    }
+
+    @Test
+    void testGetNbOfAvailBookCopies() {
+//        Given
+        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
+        BookCopy bookCopy = new BookCopy(book);
+//        When
+        bookRepository.save(book);
+        bookCopyRepository.save(bookCopy);
+        Long bookCopyId = bookCopy.getBookCopyId();
+        Long bookId = book.getBookId();
+//         Then
+        Long qty = dbService.getNbOfAvailBookCopies(book.getTitle());
+        assertEquals(1, qty);
+//        CleanUp
+        bookCopyRepository.deleteById(bookCopyId);
+        bookRepository.deleteById(bookId);
+    }
 
 //    @Test
-//    void testGetNbOfAvailBookCopies() {
-////        Given
-//        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
-//        BookCopy bookCopy = new BookCopy(book);
-////        When
-//        bookRepository.save(book);
-//        bookCopyRepository.save(bookCopy);
-//        Long bookCopyId = bookCopy.getBookCopyId();
-//        Long bookId = book.getBookId();
-////         Then
-//        Long qty = dbService.getNbOfAvailBookCopies(book.getTitle());
-//        assertEquals(1, qty);
-////        CleanUp
-//        bookCopyRepository.deleteById(bookCopyId);
-//        bookRepository.deleteById(bookId);
-//    }
-
-//    @Test
-//    void testBorrowBook() {
-////        Given
-//        User user = new User(null,"Paweł", "Staszewski");
-//        userRepository.save(user);
-//
-//        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
-//        bookRepository.save(book);
-//        BookCopy bookCopy = new BookCopy(book);
-//        book.getBookCopyList().add(bookCopy);
-//        bookRepository.save(book);
-//
-//        BorrowRecord borrowRecord = new BorrowRecord(user, bookCopy);
-//        borrowRecord.setBookCopy(bookCopy);
-//        borrowRecord.setUser(user);
-////        When
-//        borrowRecordRepository.save(borrowRecord);
-//        Long borrowRecordId = borrowRecord.getBorrowId();
-//
-////         Then
-//        dbService.borrowBook(user, bookCopy);
-//        Assertions.assertEquals("borrowed", bookCopy.getStatus());
-////        CleanUp
-//        borrowRecordRepository.deleteById(borrowRecordId);
-//    }
-
-    //nie rozpoznaje Stringa z enuma
-//    @Test
-//    void testReturnBook() {
+//    void testBorrowBook() throws UserNotFoundException, BookCopyNotFoundException {
 ////        Given
 //        User user = new User("Paweł", "Staszewski");
 //        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
 //        BookCopy bookCopy = new BookCopy(book);
-//        BorrowRecord borrowRecord = new BorrowRecord(user, bookCopy);
 ////        When
 //        userRepository.save(user);
 //        bookRepository.save(book);
-//        bookCopyRepository.save(bookCopy);
-//
+//        book.getBookCopyList().add(bookCopy);
 //        Long userId = user.getUserId();
-//        Long bookCopyId = bookCopy.getBookCopyId();
 //        Long bookId = book.getBookId();
-//        Long borrowRecordId = borrowRecord.getBorrowId();
+//        Long bookCopyId = bookCopy.getBookCopyId();
 //
 ////         Then
-//        dbService.returnBook(borrowRecordId);
-//        assertEquals("AVAILABLE", bookCopy.getStatus());
+//        dbService.borrowBook(userId, bookCopyId);
+//        Assertions.assertEquals(BookCopyStatus.RENTED, bookCopy.getStatus());
 ////        CleanUp
-//        userRepository.deleteById(userId);
-//        bookCopyRepository.deleteById(bookCopyId);
+////        borrowRecordRepository.deleteById(borrowRecordId);
 //        bookRepository.deleteById(bookId);
+//        userRepository.deleteById(userId);
 //    }
+
+
+    @Test
+    void testReturnBook() throws BorrowRecordNotFoundException {
+//        Given
+        User user = new User("Paweł", "Staszewski");
+        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
+        BookCopy bookCopy = new BookCopy(book);
+        BorrowRecord borrowRecord = new BorrowRecord(user, bookCopy);
+//        When
+        userRepository.save(user);
+        bookRepository.save(book);
+        book.getBookCopyList().add(bookCopy);
+        borrowRecordRepository.save(borrowRecord);
+
+        Long userId = user.getUserId();
+        Long bookId = book.getBookId();
+        Long borrowRecordId = borrowRecord.getBorrowId();
+//         Then
+        dbService.returnBook(borrowRecordId);
+        assertEquals(BookCopyStatus.AVAILABLE, bookCopy.getStatus());
+//        CleanUp
+        borrowRecordRepository.deleteById(borrowRecordId);
+        bookRepository.deleteById(bookId);
+        userRepository.deleteById(userId);
+    }
 
 //    @Test
 //    void testGetBorrowedBooksByUser() {

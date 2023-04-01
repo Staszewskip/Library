@@ -1,54 +1,69 @@
 package com.crud.library.service;
 
 import com.crud.library.domain.*;
+import com.crud.library.domain.dto.BookCopyDto;
+import com.crud.library.domain.dto.BookDto;
+import com.crud.library.domain.dto.BorrowRecordDto;
+import com.crud.library.domain.dto.UserDto;
+import com.crud.library.mapper.LibraryMapper;
 import com.crud.library.repository.BookCopyRepository;
 import com.crud.library.repository.BookRepository;
 import com.crud.library.repository.BorrowRecordRepository;
 import com.crud.library.repository.UserRepository;
 import exception.BookCopyNotFoundException;
+import exception.BookNotFoundException;
+import exception.BorrowRecordNotFoundException;
+import exception.UserNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 import static com.crud.library.domain.BookCopyStatus.AVAILABLE;
 import static com.crud.library.domain.BookCopyStatus.RENTED;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class DbService {
     private final BookCopyRepository bookCopyRepository;
     private final BookRepository bookRepository;
     private final BorrowRecordRepository borrowRecordRepository;
     private final UserRepository userRepository;
+    private final LibraryMapper libraryMapper;
 
-    public User saveUser(final User user) {
-        return userRepository.save(user);
+    public void saveUser(final UserDto userDto) {
+        User user = libraryMapper.mapToUser(userDto);
+        userRepository.save(user);
     }
 
-    public Book saveBook(final Book book) {
-        return bookRepository.save(book);
+    public void saveBook(final BookDto bookDto) {
+        Book book = libraryMapper.mapToBook(bookDto);
+        bookRepository.save(book);
     }
 
-    public BookCopy saveBookCopy(final Long bookId) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new IllegalStateException(" book with id " + bookId + " not found"));
-        BookCopy bookCopy = new BookCopy(bookId, book);
-        return bookCopyRepository.save(bookCopy);
+    public void saveBookCopy(final Long bookId) throws BookNotFoundException {
+        Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
+        BookCopy bookCopy = new BookCopy(book);
+        bookCopyRepository.save(bookCopy);
     }
 
-    public List<Book> showAllBooks() {
-        return bookRepository.findAll();
+    public List<BookDto> showAllBooks() {
+        List<Book> bookList = bookRepository.findAll();
+        return libraryMapper.mapToBookDtoList(bookList);
     }
 
-    public List<BookCopy> showAllBookCopies() {
-        return bookCopyRepository.findAll();
+    public List<BookCopyDto> showAllBookCopies() {
+        List<BookCopy> bookCopyList = bookCopyRepository.findAll();
+        return libraryMapper.mapToBookCopyDtoList(bookCopyList);
     }
 
-    public List<User> showAllUsers() {
-        return userRepository.findAll();
+    public List<UserDto> showAllUsers() {
+        List<User> userList = userRepository.findAll();
+        return libraryMapper.mapToUserDtoList(userList);
     }
 
     public void changeBookCopyStatus(final Long bookCopyId, BookCopyStatus status) throws BookCopyNotFoundException {
@@ -60,29 +75,33 @@ public class DbService {
         return bookCopyRepository.nbOfAvailBookCopies(title);
     }
 
-    public List<BorrowRecord> showAllBorrowsByUser(Long userId) {
-        return borrowRecordRepository.findByUserId(userId);
+    public List<BorrowRecordDto> showAllBorrowsByUser(Long userId) throws UserNotFoundException {
+        List<BorrowRecord> borrowRecordList = borrowRecordRepository.findByUserId(userId).orElseThrow(
+                UserNotFoundException::new);
+        return libraryMapper.mapToBorrowRecordDtoList(borrowRecordList);
     }
 
-    public void borrowBook(Long borrowId, Long userId, Long bookCopyId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        User user = optionalUser.get();
-        Optional<BookCopy> optionalBookCopy = bookCopyRepository.findById(bookCopyId);
-        BookCopy bookCopy = optionalBookCopy.get();
+    public void borrowBook(Long userId, Long bookCopyId) throws UserNotFoundException, BookCopyNotFoundException {
+        User user = userRepository.findById(userId).orElseThrow(
+                UserNotFoundException::new);
+        BookCopy bookCopy = bookCopyRepository.findById(bookCopyId).orElseThrow(
+                BookCopyNotFoundException::new);
 
-        BorrowRecord borrowRecord = new BorrowRecord(borrowId, user, bookCopy);
+        BorrowRecord borrowRecord = new BorrowRecord(user, bookCopy);
         borrowRecordRepository.save(borrowRecord);
         bookCopy.setStatus(RENTED);
         bookCopyRepository.save(bookCopy);
     }
 
-    public void returnBook(Long borrowRecordId) {
-        Optional<BorrowRecord> optionalBorrowRecord = borrowRecordRepository.findById(borrowRecordId);
-        BorrowRecord borrowRecord = optionalBorrowRecord.get();
+    public void returnBook(Long borrowRecordId) throws BorrowRecordNotFoundException {
+        BorrowRecord borrowRecord = borrowRecordRepository.findById(borrowRecordId).orElseThrow(
+                BorrowRecordNotFoundException::new);
 
         borrowRecord.setReturnDate(LocalDate.now());
-        BookCopy bookCopy = borrowRecord.getBookCopy();
+        borrowRecord.setReturned(true);
+        borrowRecordRepository.save(borrowRecord);
 
+        BookCopy bookCopy = borrowRecord.getBookCopy();
         bookCopy.setStatus(AVAILABLE);
         bookCopyRepository.save(bookCopy);
     }
