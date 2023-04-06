@@ -1,13 +1,15 @@
 package com.crud.library;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@OpenAPIDefinition
 @SpringBootApplication
-public class KodillaLibraryApplication {
+public class LibraryApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(KodillaLibraryApplication.class, args);
+        SpringApplication.run(LibraryApplication.class, args);
     }
 
 }

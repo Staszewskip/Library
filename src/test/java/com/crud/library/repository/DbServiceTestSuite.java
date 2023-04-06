@@ -1,10 +1,12 @@
 package com.crud.library.repository;
 
 import com.crud.library.domain.*;
+import com.crud.library.domain.dto.UserDto;
+import com.crud.library.exception.UserNotFoundException;
+import com.crud.library.mapper.LibraryMapper;
 import com.crud.library.service.DbService;
-import exception.BookCopyNotFoundException;
-import exception.BorrowRecordNotFoundException;
-import exception.UserNotFoundException;
+import com.crud.library.exception.BookCopyNotFoundException;
+import com.crud.library.exception.BorrowRecordNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-class RepositoryTestSuite {
+class DbServiceTestSuite {
     @Autowired
     private DbService dbService;
     @Autowired
@@ -32,14 +34,18 @@ class RepositoryTestSuite {
     @Autowired
     private BorrowRecordRepository borrowRecordRepository;
 
+    @Autowired
+    private LibraryMapper libraryMapper;
+
     @Test
     void testAddUser() {
-//given
+//        Given
         User user = new User("Paweł", "Staszewski");
-//    when
-        userRepository.save(user);
-//    then
-        long id = user.getUserId();
+        UserDto userDto = libraryMapper.mapToUserDto(user);
+//        When
+        User savedUser = dbService.saveUser(userDto);
+//        Then
+        long id = savedUser.getUserId();
         Optional<User> readUser = userRepository.findById(id);
         assertTrue(readUser.isPresent());
 
@@ -116,28 +122,31 @@ class RepositoryTestSuite {
         bookRepository.deleteById(bookId);
     }
 
-//    @Test
-//    void testBorrowBook() throws UserNotFoundException, BookCopyNotFoundException {
-////        Given
-//        User user = new User("Paweł", "Staszewski");
-//        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
-//        BookCopy bookCopy = new BookCopy(book);
-////        When
-//        userRepository.save(user);
-//        bookRepository.save(book);
-//        book.getBookCopyList().add(bookCopy);
-//        Long userId = user.getUserId();
-//        Long bookId = book.getBookId();
-//        Long bookCopyId = bookCopy.getBookCopyId();
-//
-////         Then
-//        dbService.borrowBook(userId, bookCopyId);
-//        Assertions.assertEquals(BookCopyStatus.RENTED, bookCopy.getStatus());
-////        CleanUp
-////        borrowRecordRepository.deleteById(borrowRecordId);
-//        bookRepository.deleteById(bookId);
-//        userRepository.deleteById(userId);
-//    }
+    @Test
+    void testBorrowBook() throws UserNotFoundException, BookCopyNotFoundException {
+//        Given
+        User user = new User("Paweł", "Staszewski");
+        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
+        BookCopy bookCopy = new BookCopy(book);
+//        When
+        userRepository.save(user);
+        bookRepository.save(book);
+        bookCopyRepository.save(bookCopy);
+
+        book.getBookCopyList().add(bookCopy);
+        bookRepository.save(book);
+        Long userId = user.getUserId();
+        Long bookId = book.getBookId();
+        Long bookCopyId = bookCopy.getBookCopyId();
+        BorrowRecord borrowRecord = dbService.borrowBook(userId, bookCopyId);
+        Long borrowRecordId = borrowRecord.getBorrowId();
+//         Then
+        Assertions.assertEquals(BookCopyStatus.RENTED, borrowRecord.getBookCopy().getStatus());
+//        CleanUp
+        borrowRecordRepository.deleteById(borrowRecordId);
+        bookRepository.deleteById(bookId);
+        userRepository.deleteById(userId);
+    }
 
 
     @Test
@@ -164,15 +173,4 @@ class RepositoryTestSuite {
         bookRepository.deleteById(bookId);
         userRepository.deleteById(userId);
     }
-
-//    @Test
-//    void testGetBorrowedBooksByUser() {
-//        List<BorrowRecord> borrowRecord = borrowRecordRepository.findByUserId(3L);
-//        assertEquals(1, borrowRecord.size());
-//    }
-//    @Test
-//    void shouldFetchAllBooks() {
-//        List<Book> bookList = bookRepository.findAll();
-//        assertEquals(1, bookList.size());
-//    }
 }

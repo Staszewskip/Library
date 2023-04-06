@@ -9,7 +9,7 @@ import com.crud.library.domain.dto.BookDto;
 import com.crud.library.domain.dto.BorrowRecordDto;
 import com.crud.library.domain.dto.UserDto;
 import com.crud.library.repository.BookRepository;
-import exception.BookNotFoundException;
+import com.crud.library.exception.BookNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class LibraryMapper {
-    private final BookRepository bookRepository;
-
     public User mapToUser(final UserDto userDto) {
         return new User(
                 userDto.getFirstName(),
@@ -32,7 +30,8 @@ public class LibraryMapper {
         return new UserDto(
                 user.getUserId(),
                 user.getFirstName(),
-                user.getLastName()
+                user.getLastName(),
+                mapToBorrowRecordDtoList(user.getBorrowRecordList())
         );
     }
 
@@ -49,13 +48,8 @@ public class LibraryMapper {
                 book.getBookId(),
                 book.getTitle(),
                 book.getAuthor(),
-                book.getYear()
-        );
-    }
-
-    public BookCopy mapToBookCopy(final Long bookCopyId) throws BookNotFoundException {
-        return new BookCopy(
-                bookRepository.findById(bookCopyId).orElseThrow(BookNotFoundException::new)
+                book.getYear(),
+                mapToBookCopyDtoList(book.getBookCopyList())
         );
     }
 

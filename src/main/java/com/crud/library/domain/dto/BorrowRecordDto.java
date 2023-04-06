@@ -13,22 +13,15 @@ import java.time.LocalDate;
 @Getter
 public class BorrowRecordDto {
 
-    private long borrowId;
-
-    @NonNull
-    private User user;
-
-    @NonNull
-    private BookCopy bookCopy;
-    @NonNull
+    private Long borrowId;
+    private Long userId;
+    private String bookCopyTitle;
     private LocalDate borrowDate;
 
-    private LocalDate returnDate;
-
-    public BorrowRecordDto(Long borrowId,User user, BookCopy bookCopy) {
+    public BorrowRecordDto(Long borrowId, User user, BookCopy bookCopy) {
         this.borrowId = borrowId;
-        this.user = user;
-        this.bookCopy = bookCopy;
+        this.userId = user.getUserId();
+        this.bookCopyTitle = bookCopy.getBook().getTitle();
         this.borrowDate = LocalDate.now();
     }
 }

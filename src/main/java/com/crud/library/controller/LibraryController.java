@@ -6,10 +6,10 @@ import com.crud.library.domain.dto.BookDto;
 import com.crud.library.domain.dto.BorrowRecordDto;
 import com.crud.library.domain.dto.UserDto;
 import com.crud.library.service.DbService;
-import exception.BookCopyNotFoundException;
-import exception.BookNotFoundException;
-import exception.BorrowRecordNotFoundException;
-import exception.UserNotFoundException;
+import com.crud.library.exception.BookCopyNotFoundException;
+import com.crud.library.exception.BookNotFoundException;
+import com.crud.library.exception.BorrowRecordNotFoundException;
+import com.crud.library.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -43,13 +43,13 @@ public class LibraryController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "changeBookCopyStatus/{bookCopyId}") // JSON parse error: Cannot deserialize value of type `com.crud.library.domain.BookCopyStatus` from Object value
-    public ResponseEntity<Void> changeBookCopyStatus(@PathVariable Long bookCopyId, @RequestBody BookCopyStatus status) throws BookCopyNotFoundException {
+    @PostMapping(value = "changeBookCopyStatus/{bookCopyId}") // działa
+    public ResponseEntity<Void> changeBookCopyStatus(@PathVariable Long bookCopyId, @RequestParam BookCopyStatus status) throws BookCopyNotFoundException {
         dbService.changeBookCopyStatus(bookCopyId, status);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping() //działa, ale lista BookCopy jest pusta
+    @GetMapping() //działa
     public ResponseEntity<List<BookDto>> getBooks() {
         return ResponseEntity.ok(dbService.showAllBooks());
     }
@@ -59,7 +59,7 @@ public class LibraryController {
         return ResponseEntity.ok(dbService.showAllBookCopies());
     }
 
-    @GetMapping(value = {"title"}) //pokazuje 0, chociaż są dodane ksiązki. Test działa
+    @GetMapping(value = {"title"}) //działa, książka musi być bez cudzysłowiów
     public ResponseEntity<Long> getNbOfBookCopies(@RequestParam String title) {
         Long nbOfAvailCopies = dbService.getNbOfAvailBookCopies(title);
         return ResponseEntity.ok(nbOfAvailCopies);
@@ -70,18 +70,18 @@ public class LibraryController {
         return ResponseEntity.ok(dbService.showAllUsers());
     }
 
-    @PostMapping(value = "borrowBook")//działa, ale wyłapuje wyjątków
+    @PostMapping(value = "borrowBook")//działa
     public ResponseEntity<Void> borrowBook(@RequestParam Long userId, @RequestParam Long bookCopyId) throws UserNotFoundException, BookCopyNotFoundException {
         dbService.borrowBook(userId, bookCopyId);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "borrowsByUser/{userId}") //działa, ale jest zapętlona serializacja
+    @GetMapping(value = "borrowsByUser/{userId}") //działa
     public ResponseEntity<List<BorrowRecordDto>> getBorrowedBooksByUser(@PathVariable Long userId) throws UserNotFoundException {
         return ResponseEntity.ok(dbService.showAllBorrowsByUser(userId));
     }
 
-    @PostMapping(value = "returnBook/{borrowRecordId}")//działa, ale wyłapuje wyjątków
+    @PostMapping(value = "returnBook/{borrowRecordId}")//działa
     public ResponseEntity<Void> returnBook(@PathVariable Long borrowRecordId) throws BorrowRecordNotFoundException {
         dbService.returnBook(borrowRecordId);
         return ResponseEntity.ok().build();

@@ -8,18 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-
 public class UserDto {
     private Long userId;
     private String firstName;
     private String lastName;
     private LocalDate registrationDate;
-    private List<BorrowRecord> borrowRecordList = new ArrayList<>();
+    private List<BorrowRecordDto> borrowRecordList;
 
-    public UserDto(Long userId, String firstName, String lastName) {
+    public UserDto(Long userId, String firstName, String lastName, List<BorrowRecordDto> borrowRecordDtoList) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.registrationDate = LocalDate.now();
+        this.borrowRecordList = borrowRecordDtoList;
     }
 }

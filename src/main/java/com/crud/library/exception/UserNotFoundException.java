@@ -1,4 +1,4 @@
-package exception;
+package com.crud.library.exception;
 
 public class UserNotFoundException extends Exception {
 }

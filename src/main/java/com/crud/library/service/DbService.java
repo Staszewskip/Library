@@ -10,17 +10,16 @@ import com.crud.library.repository.BookCopyRepository;
 import com.crud.library.repository.BookRepository;
 import com.crud.library.repository.BorrowRecordRepository;
 import com.crud.library.repository.UserRepository;
-import exception.BookCopyNotFoundException;
-import exception.BookNotFoundException;
-import exception.BorrowRecordNotFoundException;
-import exception.UserNotFoundException;
+import com.crud.library.exception.BookCopyNotFoundException;
+import com.crud.library.exception.BookNotFoundException;
+import com.crud.library.exception.BorrowRecordNotFoundException;
+import com.crud.library.exception.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static com.crud.library.domain.BookCopyStatus.AVAILABLE;
 import static com.crud.library.domain.BookCopyStatus.RENTED;
@@ -35,9 +34,10 @@ public class DbService {
     private final UserRepository userRepository;
     private final LibraryMapper libraryMapper;
 
-    public void saveUser(final UserDto userDto) {
+    public User saveUser(final UserDto userDto) {
         User user = libraryMapper.mapToUser(userDto);
         userRepository.save(user);
+        return user;
     }
 
     public void saveBook(final BookDto bookDto) {
@@ -81,7 +81,7 @@ public class DbService {
         return libraryMapper.mapToBorrowRecordDtoList(borrowRecordList);
     }
 
-    public void borrowBook(Long userId, Long bookCopyId) throws UserNotFoundException, BookCopyNotFoundException {
+    public BorrowRecord borrowBook(Long userId, Long bookCopyId) throws UserNotFoundException, BookCopyNotFoundException {
         User user = userRepository.findById(userId).orElseThrow(
                 UserNotFoundException::new);
         BookCopy bookCopy = bookCopyRepository.findById(bookCopyId).orElseThrow(
@@ -91,6 +91,7 @@ public class DbService {
         borrowRecordRepository.save(borrowRecord);
         bookCopy.setStatus(RENTED);
         bookCopyRepository.save(bookCopy);
+        return borrowRecord;
     }
 
     public void returnBook(Long borrowRecordId) throws BorrowRecordNotFoundException {

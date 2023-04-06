@@ -19,7 +19,7 @@
 Example:
 ```
     {
-        "bookId": 0,
+        "bookId": 1,
         "bookCopyList": null,
         "title": "Harry Potter",
         "author": "Joanne",
@@ -28,40 +28,16 @@ Example:
 ```
 ## Add book copy
 ### HTTP Request:
-`POST /v1/library/addBookCopy`
+`POST /v1/library/addBookCopy/{bookId}`
 
 ### Body:
-```
-[
-    {
-        "bookCopyId": 0,
-        "book": {
-            "bookId": 1,
-            "title": "Harry Potter",
-            "author": "Joanne",
-            "year": 2000
-        },
-        "borrowId": null,
-        "status": "available"
-    }
-]
-```
+
+Empty
 
 ### Returns:
 **JSON** with added book copy
 
-Example:
-```
-[
-    {
-        "bookId": 0,
-        "bookCopyList": null,
-        "title": "Harry Potter",
-        "author": "Joanne",
-        "year": 2000
-    }
-]
-```
+
 ## Show all books
 ### HTTP Request:
 `GET /v1/library`
@@ -76,12 +52,19 @@ Example:
 ```
 [
     {
-        "bookId": 0,
-        "bookCopyList": null,
+        "bookId": 1,
+        "bookCopyList": [],
         "title": "Harry Potter",
-        "author": "Joanne",
+        "author": "J.K Rowling",
         "year": 2000
-    }
+    },
+    {
+        "bookId": 2,
+        "bookCopyList": [],
+        "title": "Harry Potter",
+        "author": "J.K Rowling",
+        "year": 2000
+    },
 ]
 ```
 ## Add user
