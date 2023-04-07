@@ -110,4 +110,12 @@ public class LibraryController {
         dbService.deleteBorrowRecord(borrowRecordId);
         return ResponseEntity.ok().build();
     }
+    @PutMapping(value = "user", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) throws UserNotFoundException {
+        return ResponseEntity.ok(dbService.updateUser(userDto));
+    }
+    @PutMapping(value = "book", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BookDto> updateBook(@RequestBody BookDto bookDto) throws BookNotFoundException {
+        return ResponseEntity.ok(dbService.updateBook(bookDto));
+    }
 }

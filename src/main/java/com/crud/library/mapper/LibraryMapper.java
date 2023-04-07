@@ -31,6 +31,7 @@ public class LibraryMapper {
                 user.getUserId(),
                 user.getFirstName(),
                 user.getLastName(),
+                user.getRegistrationDate(),
                 mapToBorrowRecordDtoList(user.getBorrowRecordList())
         );
     }

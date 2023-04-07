@@ -14,7 +14,9 @@ import com.crud.library.exception.BookCopyNotFoundException;
 import com.crud.library.exception.BookNotFoundException;
 import com.crud.library.exception.BorrowRecordNotFoundException;
 import com.crud.library.exception.UserNotFoundException;
+
 import javax.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,18 +36,18 @@ public class DbService {
     private final UserRepository userRepository;
     private final LibraryMapper libraryMapper;
 
-    public User saveUser(final UserDto userDto) {
+    public User saveUser(UserDto userDto) {
         User user = libraryMapper.mapToUser(userDto);
         userRepository.save(user);
         return user;
     }
 
-    public void saveBook(final BookDto bookDto) {
+    public void saveBook(BookDto bookDto) {
         Book book = libraryMapper.mapToBook(bookDto);
         bookRepository.save(book);
     }
 
-    public void saveBookCopy(final Long bookId) throws BookNotFoundException {
+    public void saveBookCopy(Long bookId) throws BookNotFoundException {
         Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
         BookCopy bookCopy = new BookCopy(book);
         bookCopyRepository.save(bookCopy);
@@ -125,5 +127,19 @@ public class DbService {
     public void deleteBorrowRecord(Long borrowRecordId) throws BorrowRecordNotFoundException {
         BorrowRecord borrowRecord = borrowRecordRepository.findById(borrowRecordId).orElseThrow(BorrowRecordNotFoundException::new);
         borrowRecordRepository.delete(borrowRecord);
+    }
+
+    public UserDto updateUser(final UserDto userDto) throws UserNotFoundException {
+        userRepository.findById(userDto.getUserId()).orElseThrow(UserNotFoundException::new);
+        User user = libraryMapper.mapToUser(userDto);
+        userRepository.save(user);
+        return libraryMapper.mapToUserDto(user);
+    }
+
+    public BookDto updateBook(final BookDto bookDto) throws BookNotFoundException {
+        bookRepository.findById(bookDto.getBookId()).orElseThrow(BookNotFoundException::new);
+        Book book = libraryMapper.mapToBook(bookDto);
+        bookRepository.save(book);
+        return libraryMapper.mapToBookDto(book);
     }
 }
