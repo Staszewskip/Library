@@ -25,25 +25,25 @@ public class LibraryController {
 
     private final DbService dbService;
 
-    @PostMapping(value = "addUser", consumes = MediaType.APPLICATION_JSON_VALUE) //działa
+    @PostMapping(value = "addUser", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> addUser(@RequestBody UserDto userDto) {
         dbService.saveUser(userDto);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "addBook", consumes = MediaType.APPLICATION_JSON_VALUE) //działa
+    @PostMapping(value = "addBook", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> addBook(@RequestBody BookDto bookDto) {
         dbService.saveBook(bookDto);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "addBookCopy/{bookId}") //działa
+    @PostMapping(value = "addBookCopy/{bookId}")
     public ResponseEntity<Void> addBookCopy(@PathVariable Long bookId) throws BookNotFoundException {
         dbService.saveBookCopy(bookId);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "changeBookCopyStatus/{bookCopyId}") // działa
+    @PostMapping(value = "changeBookCopyStatus/{bookCopyId}")
     public ResponseEntity<Void> changeBookCopyStatus(@PathVariable Long bookCopyId, @RequestParam BookCopyStatus status) throws BookCopyNotFoundException {
         dbService.changeBookCopyStatus(bookCopyId, status);
         return ResponseEntity.ok().build();
@@ -54,36 +54,61 @@ public class LibraryController {
         return ResponseEntity.ok(dbService.showAllBooks());
     }
 
-    @GetMapping(value = {"bookCopy"}) //działa
+    @GetMapping(value = {"bookCopy"})
     public ResponseEntity<List<BookCopyDto>> getBookCopy() {
         return ResponseEntity.ok(dbService.showAllBookCopies());
     }
 
-    @GetMapping(value = {"title"}) //działa, książka musi być bez cudzysłowiów
+    @GetMapping(value = {"title"})
     public ResponseEntity<Long> getNbOfBookCopies(@RequestParam String title) {
         Long nbOfAvailCopies = dbService.getNbOfAvailBookCopies(title);
         return ResponseEntity.ok(nbOfAvailCopies);
     }
 
-    @GetMapping(value = {"users"}) //działa
+    @GetMapping(value = {"users"})
     public ResponseEntity<List<UserDto>> getUsers() {
         return ResponseEntity.ok(dbService.showAllUsers());
     }
 
-    @PostMapping(value = "borrowBook")//działa
+    @PostMapping(value = "borrowBook")
     public ResponseEntity<Void> borrowBook(@RequestParam Long userId, @RequestParam Long bookCopyId) throws UserNotFoundException, BookCopyNotFoundException {
         dbService.borrowBook(userId, bookCopyId);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "borrowsByUser/{userId}") //działa
+    @GetMapping(value = "borrowsByUser/{userId}")
     public ResponseEntity<List<BorrowRecordDto>> getBorrowedBooksByUser(@PathVariable Long userId) throws UserNotFoundException {
         return ResponseEntity.ok(dbService.showAllBorrowsByUser(userId));
     }
 
-    @PostMapping(value = "returnBook/{borrowRecordId}")//działa
+    @PostMapping(value = "returnBook/{borrowRecordId}")
     public ResponseEntity<Void> returnBook(@PathVariable Long borrowRecordId) throws BorrowRecordNotFoundException {
         dbService.returnBook(borrowRecordId);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping(value = "user/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) throws UserNotFoundException {
+        dbService.deleteUser(userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping(value = "book/{bookId}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long bookId) throws BookNotFoundException {
+        dbService.deleteBook(bookId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping(value = "bookCopy/{bookCopyId}")
+    public ResponseEntity<Void> deleteBookCopy(@PathVariable Long bookCopyId) throws BookCopyNotFoundException {
+        dbService.deleteBookCopy(bookCopyId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping(value = "borrowRecord/{borrowRecordId}")
+    public ResponseEntity<Void> deleteBorrowRecord(@PathVariable Long borrowRecordId) throws BorrowRecordNotFoundException {
+        dbService.deleteBorrowRecord(borrowRecordId);
+        return ResponseEntity.ok().build();
+    }
+
 }

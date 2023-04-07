@@ -106,4 +106,24 @@ public class DbService {
         bookCopy.setStatus(AVAILABLE);
         bookCopyRepository.save(bookCopy);
     }
+
+    public void deleteUser(Long userId) throws UserNotFoundException {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        userRepository.delete(user);
+    }
+
+    public void deleteBook(Long bookId) throws BookNotFoundException {
+        Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
+        bookRepository.delete(book);
+    }
+
+    public void deleteBookCopy(Long bookCopyId) throws BookCopyNotFoundException {
+        BookCopy bookCopy = bookCopyRepository.findById(bookCopyId).orElseThrow(BookCopyNotFoundException::new);
+        bookCopyRepository.delete(bookCopy);
+    }
+
+    public void deleteBorrowRecord(Long borrowRecordId) throws BorrowRecordNotFoundException {
+        BorrowRecord borrowRecord = borrowRecordRepository.findById(borrowRecordId).orElseThrow(BorrowRecordNotFoundException::new);
+        borrowRecordRepository.delete(borrowRecord);
+    }
 }
