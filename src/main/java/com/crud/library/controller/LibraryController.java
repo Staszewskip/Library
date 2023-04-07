@@ -110,5 +110,4 @@ public class LibraryController {
         dbService.deleteBorrowRecord(borrowRecordId);
         return ResponseEntity.ok().build();
     }
-
 }

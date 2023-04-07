@@ -14,7 +14,7 @@ import com.crud.library.exception.BookCopyNotFoundException;
 import com.crud.library.exception.BookNotFoundException;
 import com.crud.library.exception.BorrowRecordNotFoundException;
 import com.crud.library.exception.UserNotFoundException;
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

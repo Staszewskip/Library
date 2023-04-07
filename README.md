@@ -9,4 +9,5 @@ How to run application:
 3) Add priviliges for user to this database, command:
 GRANT ALL PRIVILEGES ON kodilla_library.* to **< username >**
 
-### [Endpoints description](docs/EndpointsDocumentation.md)
+### [Endpoints documentation  - Swagger](http://localhost:8080/swagger-ui/index.html)
+Please note that application must be run before using Swagger
