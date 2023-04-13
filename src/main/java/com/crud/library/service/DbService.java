@@ -125,15 +125,18 @@ public class DbService {
     }
 
     public UserDTO updateUser(final UserDTO userDTO) throws UserNotFoundException {
-        userRepository.findById(userDTO.getUserId()).orElseThrow(UserNotFoundException::new);
-        User user = libraryMapper.mapToUser(userDTO);
+        User user = userRepository.findById(userDTO.getUserId()).orElseThrow(UserNotFoundException::new);
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
         userRepository.save(user);
         return libraryMapper.mapToUserDTO(user);
     }
 
     public BookDTO updateBook(final BookDTO bookDTO) throws BookNotFoundException {
-        bookRepository.findById(bookDTO.getBookId()).orElseThrow(BookNotFoundException::new);
-        Book book = libraryMapper.mapToBook(bookDTO);
+        Book book = bookRepository.findById(bookDTO.getBookId()).orElseThrow(BookNotFoundException::new);
+        book.setTitle(bookDTO.getTitle());
+        book.setAuthor(bookDTO.getAuthor());
+        book.setYear(bookDTO.getYear());
         bookRepository.save(book);
         return libraryMapper.mapToBookDTO(book);
     }

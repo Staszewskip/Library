@@ -8,8 +8,6 @@ import com.crud.library.domain.dto.BookCopyDTO;
 import com.crud.library.domain.dto.BookDTO;
 import com.crud.library.domain.dto.BorrowRecordDTO;
 import com.crud.library.domain.dto.UserDTO;
-import com.crud.library.repository.BookRepository;
-import com.crud.library.exception.BookNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +36,7 @@ public class LibraryMapper {
 
     public Book mapToBook(final BookDTO bookDTO) {
         return new Book(
+
                 bookDTO.getTitle(),
                 bookDTO.getAuthor(),
                 bookDTO.getYear()
