@@ -7,12 +7,12 @@ import static com.crud.library.domain.BookCopyStatus.AVAILABLE;
 
 
 @Getter
-public class BookCopyDto {
+public class BookCopyDTO {
     private Long bookCopyId;
     private Long bookId;
     private BookCopyStatus status;
 
-    public BookCopyDto(Long bookCopyId, Long bookId) {
+    public BookCopyDTO(Long bookCopyId, Long bookId) {
         this.bookCopyId = bookCopyId;
         this.bookId = bookId;
         this.status = AVAILABLE;

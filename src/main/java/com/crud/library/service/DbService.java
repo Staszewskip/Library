@@ -1,10 +1,10 @@
 package com.crud.library.service;
 
 import com.crud.library.domain.*;
-import com.crud.library.domain.dto.BookCopyDto;
-import com.crud.library.domain.dto.BookDto;
-import com.crud.library.domain.dto.BorrowRecordDto;
-import com.crud.library.domain.dto.UserDto;
+import com.crud.library.domain.dto.BookCopyDTO;
+import com.crud.library.domain.dto.BookDTO;
+import com.crud.library.domain.dto.BorrowRecordDTO;
+import com.crud.library.domain.dto.UserDTO;
 import com.crud.library.mapper.LibraryMapper;
 import com.crud.library.repository.BookCopyRepository;
 import com.crud.library.repository.BookRepository;
@@ -36,14 +36,14 @@ public class DbService {
     private final UserRepository userRepository;
     private final LibraryMapper libraryMapper;
 
-    public User saveUser(UserDto userDto) {
-        User user = libraryMapper.mapToUser(userDto);
+    public User saveUser(UserDTO userDTO) {
+        User user = libraryMapper.mapToUser(userDTO);
         userRepository.save(user);
         return user;
     }
 
-    public void saveBook(BookDto bookDto) {
-        Book book = libraryMapper.mapToBook(bookDto);
+    public void saveBook(BookDTO bookDTO) {
+        Book book = libraryMapper.mapToBook(bookDTO);
         bookRepository.save(book);
     }
 
@@ -53,19 +53,19 @@ public class DbService {
         bookCopyRepository.save(bookCopy);
     }
 
-    public List<BookDto> showAllBooks() {
+    public List<BookDTO> showAllBooks() {
         List<Book> bookList = bookRepository.findAll();
-        return libraryMapper.mapToBookDtoList(bookList);
+        return libraryMapper.mapToBookDTOList(bookList);
     }
 
-    public List<BookCopyDto> showAllBookCopies() {
+    public List<BookCopyDTO> showAllBookCopies() {
         List<BookCopy> bookCopyList = bookCopyRepository.findAll();
-        return libraryMapper.mapToBookCopyDtoList(bookCopyList);
+        return libraryMapper.mapToBookCopyDTOList(bookCopyList);
     }
 
-    public List<UserDto> showAllUsers() {
+    public List<UserDTO> showAllUsers() {
         List<User> userList = userRepository.findAll();
-        return libraryMapper.mapToUserDtoList(userList);
+        return libraryMapper.mapToUserDTOList(userList);
     }
 
     public void changeBookCopyStatus(final Long bookCopyId, BookCopyStatus status) throws BookCopyNotFoundException {
@@ -77,10 +77,10 @@ public class DbService {
         return bookCopyRepository.nbOfAvailBookCopies(title);
     }
 
-    public List<BorrowRecordDto> showAllBorrowsByUser(Long userId) throws UserNotFoundException {
+    public List<BorrowRecordDTO> showAllBorrowsByUser(Long userId) throws UserNotFoundException {
         List<BorrowRecord> borrowRecordList = borrowRecordRepository.findByUserId(userId).orElseThrow(
                 UserNotFoundException::new);
-        return libraryMapper.mapToBorrowRecordDtoList(borrowRecordList);
+        return libraryMapper.mapToBorrowRecordDTOList(borrowRecordList);
     }
 
     public BorrowRecord borrowBook(Long userId, Long bookCopyId) throws UserNotFoundException, BookCopyNotFoundException {
@@ -124,22 +124,17 @@ public class DbService {
         bookCopyRepository.delete(bookCopy);
     }
 
-    public void deleteBorrowRecord(Long borrowRecordId) throws BorrowRecordNotFoundException {
-        BorrowRecord borrowRecord = borrowRecordRepository.findById(borrowRecordId).orElseThrow(BorrowRecordNotFoundException::new);
-        borrowRecordRepository.delete(borrowRecord);
-    }
-
-    public UserDto updateUser(final UserDto userDto) throws UserNotFoundException {
-        userRepository.findById(userDto.getUserId()).orElseThrow(UserNotFoundException::new);
-        User user = libraryMapper.mapToUser(userDto);
+    public UserDTO updateUser(final UserDTO userDTO) throws UserNotFoundException {
+        userRepository.findById(userDTO.getUserId()).orElseThrow(UserNotFoundException::new);
+        User user = libraryMapper.mapToUser(userDTO);
         userRepository.save(user);
-        return libraryMapper.mapToUserDto(user);
+        return libraryMapper.mapToUserDTO(user);
     }
 
-    public BookDto updateBook(final BookDto bookDto) throws BookNotFoundException {
-        bookRepository.findById(bookDto.getBookId()).orElseThrow(BookNotFoundException::new);
-        Book book = libraryMapper.mapToBook(bookDto);
+    public BookDTO updateBook(final BookDTO bookDTO) throws BookNotFoundException {
+        bookRepository.findById(bookDTO.getBookId()).orElseThrow(BookNotFoundException::new);
+        Book book = libraryMapper.mapToBook(bookDTO);
         bookRepository.save(book);
-        return libraryMapper.mapToBookDto(book);
+        return libraryMapper.mapToBookDTO(book);
     }
 }

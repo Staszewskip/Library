@@ -1,7 +1,7 @@
 package com.crud.library.repository;
 
 import com.crud.library.domain.*;
-import com.crud.library.domain.dto.UserDto;
+import com.crud.library.domain.dto.UserDTO;
 import com.crud.library.exception.UserNotFoundException;
 import com.crud.library.mapper.LibraryMapper;
 import com.crud.library.service.DbService;
@@ -41,9 +41,9 @@ class DbServiceTestSuite {
     void testAddUser() {
 //        Given
         User user = new User("Paweł", "Staszewski");
-        UserDto userDto = libraryMapper.mapToUserDto(user);
+        UserDTO userDTO = libraryMapper.mapToUserDTO(user);
 //        When
-        User savedUser = dbService.saveUser(userDto);
+        User savedUser = dbService.saveUser(userDTO);
 //        Then
         long id = savedUser.getUserId();
         Optional<User> readUser = userRepository.findById(id);

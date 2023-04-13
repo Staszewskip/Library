@@ -1,21 +1,19 @@
 package com.crud.library.domain.dto;
 
-import com.crud.library.domain.BookCopy;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 @Getter
-public class BookDto {
+public class BookDTO {
     private Long bookId;
     private String title;
     private String author;
     private int year;
-    private List<BookCopyDto> bookCopyList;
+    private List<BookCopyDTO> bookCopyList;
 
-    public BookDto(Long bookId, String title, String author, int year,List<BookCopyDto> bookCopyList) {
+    public BookDTO(Long bookId, String title, String author, int year,List<BookCopyDTO> bookCopyList) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;

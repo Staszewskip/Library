@@ -4,10 +4,10 @@ import com.crud.library.domain.Book;
 import com.crud.library.domain.BookCopy;
 import com.crud.library.domain.BorrowRecord;
 import com.crud.library.domain.User;
-import com.crud.library.domain.dto.BookCopyDto;
-import com.crud.library.domain.dto.BookDto;
-import com.crud.library.domain.dto.BorrowRecordDto;
-import com.crud.library.domain.dto.UserDto;
+import com.crud.library.domain.dto.BookCopyDTO;
+import com.crud.library.domain.dto.BookDTO;
+import com.crud.library.domain.dto.BorrowRecordDTO;
+import com.crud.library.domain.dto.UserDTO;
 import com.crud.library.repository.BookRepository;
 import com.crud.library.exception.BookNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,76 +19,76 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class LibraryMapper {
-    public User mapToUser(final UserDto userDto) {
+    public User mapToUser(final UserDTO userDTO) {
         return new User(
-                userDto.getFirstName(),
-                userDto.getLastName()
+                userDTO.getFirstName(),
+                userDTO.getLastName()
         );
     }
 
-    public UserDto mapToUserDto(final User user) {
-        return new UserDto(
+    public UserDTO mapToUserDTO(final User user) {
+        return new UserDTO(
                 user.getUserId(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getRegistrationDate(),
-                mapToBorrowRecordDtoList(user.getBorrowRecordList())
+                mapToBorrowRecordDTOList(user.getBorrowRecordList())
         );
     }
 
-    public Book mapToBook(final BookDto bookDto) {
+    public Book mapToBook(final BookDTO bookDTO) {
         return new Book(
-                bookDto.getTitle(),
-                bookDto.getAuthor(),
-                bookDto.getYear()
+                bookDTO.getTitle(),
+                bookDTO.getAuthor(),
+                bookDTO.getYear()
         );
     }
 
-    public BookDto mapToBookDto(final Book book) {
-        return new BookDto(
+    public BookDTO mapToBookDTO(final Book book) {
+        return new BookDTO(
                 book.getBookId(),
                 book.getTitle(),
                 book.getAuthor(),
                 book.getYear(),
-                mapToBookCopyDtoList(book.getBookCopyList())
+                mapToBookCopyDTOList(book.getBookCopyList())
         );
     }
 
-    public BookCopyDto mapToBookCopyDto(final BookCopy bookCopy) {
-        return new BookCopyDto(
+    public BookCopyDTO mapToBookCopyDTO(final BookCopy bookCopy) {
+        return new BookCopyDTO(
                 bookCopy.getBookCopyId(),
                 bookCopy.getBook().getBookId());
     }
 
-    public BorrowRecordDto mapToBorrowRecordDto(final BorrowRecord borrowRecord) {
-        return new BorrowRecordDto(
+    public BorrowRecordDTO mapToBorrowRecordDTO(final BorrowRecord borrowRecord) {
+        return new BorrowRecordDTO(
                 borrowRecord.getBorrowId(),
                 borrowRecord.getUser(),
                 borrowRecord.getBookCopy()
         );
     }
 
-    public List<BookDto> mapToBookDtoList(List<Book> bookList) {
+    public List<BookDTO> mapToBookDTOList(List<Book> bookList) {
         return bookList.stream()
-                .map(this::mapToBookDto)
+                .map(this::mapToBookDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<BookCopyDto> mapToBookCopyDtoList(List<BookCopy> bookCopyList) {
+    public List<BookCopyDTO> mapToBookCopyDTOList(List<BookCopy> bookCopyList) {
         return bookCopyList.stream()
-                .map(this::mapToBookCopyDto)
+                .map(this::mapToBookCopyDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<BorrowRecordDto> mapToBorrowRecordDtoList(List<BorrowRecord> BorrowRecordList) {
+    public List<BorrowRecordDTO> mapToBorrowRecordDTOList(List<BorrowRecord> BorrowRecordList) {
         return BorrowRecordList.stream()
-                .map(this::mapToBorrowRecordDto)
+                .map(this::mapToBorrowRecordDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<UserDto> mapToUserDtoList(List<User> userList) {
+    public List<UserDTO> mapToUserDTOList(List<User> userList) {
         return userList.stream()
-                .map(this::mapToUserDto)
+                .map(this::mapToUserDTO)
                 .collect(Collectors.toList());
     }
 }
