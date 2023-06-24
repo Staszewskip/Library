@@ -13,11 +13,11 @@ public class UserDTO {
     private LocalDate registrationDate;
     private List<BorrowRecordDTO> borrowRecordDTOList;
 
-    public UserDTO(Long userId, String firstName, String lastName, LocalDate registrationDate, List<BorrowRecordDTO> borrowRecordDTOList) {
+    public UserDTO(Long userId, String firstName, String lastName,  List<BorrowRecordDTO> borrowRecordDTOList) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.registrationDate = registrationDate;
+        this.registrationDate = LocalDate.now();
         this.borrowRecordDTOList = borrowRecordDTOList;
     }
 }

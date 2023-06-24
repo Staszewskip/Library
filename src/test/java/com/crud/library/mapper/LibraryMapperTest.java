@@ -29,7 +29,7 @@ private BookMapper bookMapper;
     @Test
     void mapToBookDTO() {
         // Given
-        BookDTO bookDto = new BookDTO(null,"title","author",2000, Collections.emptyList());
+        BookDTO bookDto = new BookDTO(null,"title","author",2000,Collections.emptyList());
         Book book = new Book("title","author",2000);
         // When
         BookDTO mappedBookDTO = bookMapper.mapToBookDTO(book);

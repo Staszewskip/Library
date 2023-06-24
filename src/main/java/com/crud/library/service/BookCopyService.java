@@ -22,10 +22,11 @@ public class BookCopyService {
     private final BookCopyRepository bookCopyRepository;
     private final BookRepository bookRepository;
     private final BookCopyMapper bookCopyMapper;
-    public void saveBookCopy(Long bookId) throws BookNotFoundException {
+    public BookCopy saveBookCopy(Long bookId) throws BookNotFoundException {
         Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
         BookCopy bookCopy = new BookCopy(book);
         bookCopyRepository.save(bookCopy);
+        return bookCopy;
     }
     public void deleteBookCopy(Long bookCopyId) throws BookCopyNotFoundException {
         BookCopy bookCopy = bookCopyRepository.findById(bookCopyId).orElseThrow(BookCopyNotFoundException::new);

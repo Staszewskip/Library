@@ -24,7 +24,6 @@ public class UserMapper {
                 user.getUserId(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getRegistrationDate(),
                 borrowMapper.mapToBorrowRecordDTOList(user.getBorrowRecordList())
         );
     }

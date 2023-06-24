@@ -17,9 +17,9 @@ import java.util.List;
 public class BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
-    public void saveBook(BookDTO bookDTO) {
+    public Book saveBook(BookDTO bookDTO) {
         Book book = bookMapper.mapToBook(bookDTO);
-        bookRepository.save(book);
+        return bookRepository.save(book);
     }
 
     public List<BookDTO> showAllBooks() {

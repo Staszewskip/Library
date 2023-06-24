@@ -1,7 +1,9 @@
 package com.crud.library.repository;
 
 import com.crud.library.domain.*;
+import com.crud.library.domain.dto.BookDTO;
 import com.crud.library.domain.dto.UserDTO;
+import com.crud.library.exception.BookNotFoundException;
 import com.crud.library.exception.UserNotFoundException;
 import com.crud.library.exception.BookCopyNotFoundException;
 import com.crud.library.exception.BorrowRecordNotFoundException;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static com.crud.library.domain.BookCopyStatus.AVAILABLE;
@@ -70,121 +73,101 @@ class DbServiceTestSuite {
     @Test
     void testAddBook() {
 //        Given
-        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
+        BookDTO bookDTO = new BookDTO(null, "Harry Potter", "J.K Rowling", 2000, Collections.emptyList());
 //        When
-        bookRepository.save(book);
-        long id = book.getBookId();
+        bookService.saveBook(bookDTO);
 //        Then
-        Optional<Book> readBook = bookRepository.findById(id);
-        assertTrue(readBook.isPresent());
+        assertEquals(1, bookRepository.count());
 //        cleanUp
-        bookRepository.deleteById(id);
+        bookRepository.deleteAll();
     }
 
     @Test
-    void testAddBookCopy() {
+    void testAddBookCopy() throws BookNotFoundException {
 //        Given
-        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
-        BookCopy bookCopy = new BookCopy(book);
+        BookDTO bookDTO = new BookDTO(null, "Harry Potter", "J.K Rowling", 2000, Collections.emptyList());
 //     When
-        bookRepository.save(book);
-        bookCopyRepository.save(bookCopy);
-        long bookCopyId = bookCopy.getBookCopyId();
-        long bookId = book.getBookId();
+        Book savedBook = bookService.saveBook(bookDTO);
+        bookCopyService.saveBookCopy(savedBook.getBookId());
 
 //        Then
-        Optional<BookCopy> readBookCopy = bookCopyRepository.findById(bookCopyId);
-        assertTrue(readBookCopy.isPresent());
+        assertEquals(1, bookCopyRepository.count());
 //        CleanUp
-        bookCopyRepository.deleteById(bookCopyId);
-        bookRepository.deleteById(bookId);
+        bookRepository.deleteAll();
+        bookCopyRepository.deleteAll();
     }
 
     @Test
-    void testChangeBookCopyStatus() throws BookCopyNotFoundException {
+    void testChangeBookCopyStatus() throws BookCopyNotFoundException, BookNotFoundException {
 //        Given
-        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
-        BookCopy bookCopy = new BookCopy(book);
-//        When
-        bookRepository.save(book);
-        bookCopyRepository.save(bookCopy);
-        long bookCopyId = bookCopy.getBookCopyId();
-        long bookId = book.getBookId();
+        BookDTO bookDTO = new BookDTO(null, "Harry Potter", "J.K Rowling", 2000, Collections.emptyList());
+//     When
+        Book savedBook = bookService.saveBook(bookDTO);
+        BookCopy savedBookCopy = bookCopyService.saveBookCopy(savedBook.getBookId());
 //         Then
-        bookCopyService.changeBookCopyStatus(bookCopyId, AVAILABLE);
-        assertEquals(AVAILABLE, bookCopy.getStatus());
+        bookCopyService.changeBookCopyStatus(savedBookCopy.getBookCopyId(), AVAILABLE);
+        assertEquals(AVAILABLE, savedBookCopy.getStatus());
 //        CleanUp
-        bookCopyRepository.deleteById(bookCopyId);
-        bookRepository.deleteById(bookId);
+        bookRepository.deleteAll();
+        bookCopyRepository.deleteAll();
     }
 
     @Test
-    void testGetNbOfAvailBookCopies() {
+    void testGetNbOfAvailBookCopies() throws BookNotFoundException {
 //        Given
-        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
-        BookCopy bookCopy = new BookCopy(book);
-//        When
-        bookRepository.save(book);
-        bookCopyRepository.save(bookCopy);
-        Long bookCopyId = bookCopy.getBookCopyId();
-        Long bookId = book.getBookId();
+        BookDTO bookDTO = new BookDTO(null, "Harry Potter", "J.K Rowling", 2000, Collections.emptyList());
+//     When
+        Book savedBook = bookService.saveBook(bookDTO);
+        bookCopyService.saveBookCopy(savedBook.getBookId());
 //         Then
-        Long qty = bookCopyService.getNbOfAvailBookCopies(book.getTitle());
+        Long qty = bookCopyService.getNbOfAvailBookCopies(savedBook.getTitle());
         assertEquals(1, qty);
 //        CleanUp
-        bookCopyRepository.deleteById(bookCopyId);
-        bookRepository.deleteById(bookId);
+        bookRepository.deleteAll();
+        bookCopyRepository.deleteAll();
     }
 
     @Test
-    void testBorrowBook() throws UserNotFoundException, BookCopyNotFoundException {
+    void testBorrowBook() throws UserNotFoundException, BookCopyNotFoundException, BookNotFoundException {
 //        Given
-        User user = new User("Paweł", "Staszewski");
-        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
-        BookCopy bookCopy = new BookCopy(book);
+        UserDTO userDTO = new UserDTO(null, "Paweł", "Staszewski", Collections.emptyList());
+        BookDTO bookDTO = new BookDTO(null, "Harry Potter", "J.K Rowling", 2000, Collections.emptyList());
 //        When
-        userRepository.save(user);
-        bookRepository.save(book);
-        bookCopyRepository.save(bookCopy);
+        User savedUser = userService.saveUser(userDTO);
+        Book savedBook = bookService.saveBook(bookDTO);
+        BookCopy savedBookCopy = bookCopyService.saveBookCopy(savedBook.getBookId());
 
-        book.getBookCopyList().add(bookCopy);
-        bookRepository.save(book);
-        Long userId = user.getUserId();
-        Long bookId = book.getBookId();
-        Long bookCopyId = bookCopy.getBookCopyId();
-        BorrowRecord borrowRecord = borrowService.borrowBook(userId, bookCopyId);
-        Long borrowRecordId = borrowRecord.getBorrowId();
+        savedBook.getBookCopyList().add(savedBookCopy);
+        bookService.saveBook(bookDTO);
+        BorrowRecord borrowRecord = borrowService.borrowBook(savedUser.getUserId(), savedBookCopy.getBookCopyId());
+
 //         Then
         Assertions.assertEquals(BookCopyStatus.RENTED, borrowRecord.getBookCopy().getStatus());
 //        CleanUp
-        borrowRecordRepository.deleteById(borrowRecordId);
-        bookRepository.deleteById(bookId);
-        userRepository.deleteById(userId);
+        borrowRecordRepository.deleteAll();
+        bookRepository.deleteAll();
+        bookCopyRepository.deleteAll();
     }
 
 
     @Test
-    void testReturnBook() throws BorrowRecordNotFoundException {
+    void testReturnBook() throws BorrowRecordNotFoundException, BookNotFoundException, UserNotFoundException, BookCopyNotFoundException {
 //        Given
-        User user = new User("Paweł", "Staszewski");
-        Book book = new Book("Harry Potter", "J.K Rowling", 2000);
-        BookCopy bookCopy = new BookCopy(book);
-        BorrowRecord borrowRecord = new BorrowRecord(user, bookCopy);
+        UserDTO userDTO = new UserDTO(null, "Paweł", "Staszewski", Collections.emptyList());
+        BookDTO bookDTO = new BookDTO(null, "Harry Potter", "J.K Rowling", 2000, Collections.emptyList());
 //        When
-        userRepository.save(user);
-        bookRepository.save(book);
-        book.getBookCopyList().add(bookCopy);
-        borrowRecordRepository.save(borrowRecord);
+        User savedUser = userService.saveUser(userDTO);
+        Book savedBook = bookService.saveBook(bookDTO);
+        BookCopy savedBookCopy = bookCopyService.saveBookCopy(savedBook.getBookId());
 
-        Long userId = user.getUserId();
-        Long bookId = book.getBookId();
-        Long borrowRecordId = borrowRecord.getBorrowId();
+        BorrowRecord savedBorrowRecord = borrowService.borrowBook(savedUser.getUserId(),savedBookCopy.getBookCopyId());
+
 //         Then
-        borrowService.returnBook(borrowRecordId);
-        assertEquals(BookCopyStatus.AVAILABLE, bookCopy.getStatus());
+        borrowService.returnBook(savedBorrowRecord.getBorrowId());
+        assertEquals(BookCopyStatus.AVAILABLE, savedBookCopy.getStatus());
 //        CleanUp
-        borrowRecordRepository.deleteById(borrowRecordId);
-        bookRepository.deleteById(bookId);
-        userRepository.deleteById(userId);
+        borrowRecordRepository.deleteAll();
+        bookRepository.deleteAll();
+        bookCopyRepository.deleteAll();
     }
 }
