@@ -3,10 +3,13 @@ package com.crud.library.repository;
 import com.crud.library.domain.*;
 import com.crud.library.domain.dto.UserDTO;
 import com.crud.library.exception.UserNotFoundException;
-import com.crud.library.mapper.LibraryMapper;
-import com.crud.library.service.DbService;
 import com.crud.library.exception.BookCopyNotFoundException;
 import com.crud.library.exception.BorrowRecordNotFoundException;
+import com.crud.library.mapper.UserMapper;
+import com.crud.library.service.BookCopyService;
+import com.crud.library.service.BookService;
+import com.crud.library.service.BorrowService;
+import com.crud.library.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 class DbServiceTestSuite {
     @Autowired
-    private DbService dbService;
+    private BookCopyService bookCopyService;
+
+    @Autowired
+    private BookService bookService;
+
+    @Autowired
+    private BorrowService borrowService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private UserRepository userRepository;
@@ -36,16 +48,16 @@ class DbServiceTestSuite {
     private BorrowRecordRepository borrowRecordRepository;
 
     @Autowired
-    private LibraryMapper libraryMapper;
+    private UserMapper userMapper;
 
 
     @Test
     void testAddUser() {
 //        Given
         User user = new User("Paweł", "Staszewski");
-        UserDTO userDTO = libraryMapper.mapToUserDTO(user);
+        UserDTO userDTO = userMapper.mapToUserDTO(user);
 //        When
-        User savedUser = dbService.saveUser(userDTO);
+        User savedUser = userService.saveUser(userDTO);
 //        Then
         long id = savedUser.getUserId();
         Optional<User> readUser = userRepository.findById(id);
@@ -99,7 +111,7 @@ class DbServiceTestSuite {
         long bookCopyId = bookCopy.getBookCopyId();
         long bookId = book.getBookId();
 //         Then
-        dbService.changeBookCopyStatus(bookCopyId, AVAILABLE);
+        bookCopyService.changeBookCopyStatus(bookCopyId, AVAILABLE);
         assertEquals(AVAILABLE, bookCopy.getStatus());
 //        CleanUp
         bookCopyRepository.deleteById(bookCopyId);
@@ -117,7 +129,7 @@ class DbServiceTestSuite {
         Long bookCopyId = bookCopy.getBookCopyId();
         Long bookId = book.getBookId();
 //         Then
-        Long qty = dbService.getNbOfAvailBookCopies(book.getTitle());
+        Long qty = bookCopyService.getNbOfAvailBookCopies(book.getTitle());
         assertEquals(1, qty);
 //        CleanUp
         bookCopyRepository.deleteById(bookCopyId);
@@ -140,7 +152,7 @@ class DbServiceTestSuite {
         Long userId = user.getUserId();
         Long bookId = book.getBookId();
         Long bookCopyId = bookCopy.getBookCopyId();
-        BorrowRecord borrowRecord = dbService.borrowBook(userId, bookCopyId);
+        BorrowRecord borrowRecord = borrowService.borrowBook(userId, bookCopyId);
         Long borrowRecordId = borrowRecord.getBorrowId();
 //         Then
         Assertions.assertEquals(BookCopyStatus.RENTED, borrowRecord.getBookCopy().getStatus());
@@ -168,7 +180,7 @@ class DbServiceTestSuite {
         Long bookId = book.getBookId();
         Long borrowRecordId = borrowRecord.getBorrowId();
 //         Then
-        dbService.returnBook(borrowRecordId);
+        borrowService.returnBook(borrowRecordId);
         assertEquals(BookCopyStatus.AVAILABLE, bookCopy.getStatus());
 //        CleanUp
         borrowRecordRepository.deleteById(borrowRecordId);

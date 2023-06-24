@@ -3,7 +3,7 @@ package com.crud.library.service;
 import com.crud.library.domain.Book;
 import com.crud.library.domain.dto.BookDTO;
 import com.crud.library.exception.BookNotFoundException;
-import com.crud.library.mapper.LibraryMapper;
+import com.crud.library.mapper.BookMapper;
 import com.crud.library.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,15 +16,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
-    private final LibraryMapper libraryMapper;
+    private final BookMapper bookMapper;
     public void saveBook(BookDTO bookDTO) {
-        Book book = libraryMapper.mapToBook(bookDTO);
+        Book book = bookMapper.mapToBook(bookDTO);
         bookRepository.save(book);
     }
 
     public List<BookDTO> showAllBooks() {
         List<Book> bookList = bookRepository.findAll();
-        return libraryMapper.mapToBookDTOList(bookList);
+        return bookMapper.mapToBookDTOList(bookList);
     }
     public void deleteBook(Long bookId) throws BookNotFoundException {
         Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
@@ -36,6 +36,6 @@ public class BookService {
         book.setAuthor(bookDTO.getAuthor());
         book.setYear(bookDTO.getYear());
         bookRepository.save(book);
-        return libraryMapper.mapToBookDTO(book);
+        return bookMapper.mapToBookDTO(book);
     }
 }

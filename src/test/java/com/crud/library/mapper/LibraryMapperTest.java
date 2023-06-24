@@ -12,16 +12,16 @@ import java.util.Collections;
 
 
 @SpringBootTest
-class LibraryMapperTest {
+class bookMapperTest {
 @Autowired
-private LibraryMapper libraryMapper;
+private BookMapper bookMapper;
     @Test
     void mapToBook() {
         // Given
         Book book = new Book("title","author",2000);
         BookDTO bookDto = new BookDTO(0L,"title","author",2000, Collections.emptyList());
         // When
-        Book mappedBook = libraryMapper.mapToBook(bookDto);
+        Book mappedBook = bookMapper.mapToBook(bookDto);
         //  Then
         Assertions.assertEquals(book,mappedBook);
     }
@@ -32,7 +32,7 @@ private LibraryMapper libraryMapper;
         BookDTO bookDto = new BookDTO(null,"title","author",2000, Collections.emptyList());
         Book book = new Book("title","author",2000);
         // When
-        BookDTO mappedBookDTO = libraryMapper.mapToBookDTO(book);
+        BookDTO mappedBookDTO = bookMapper.mapToBookDTO(book);
         //  Then
         Assertions.assertEquals(bookDto,mappedBookDTO);
     }

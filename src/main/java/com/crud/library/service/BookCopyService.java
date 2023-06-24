@@ -6,7 +6,7 @@ import com.crud.library.domain.BookCopyStatus;
 import com.crud.library.domain.dto.BookCopyDTO;
 import com.crud.library.exception.BookCopyNotFoundException;
 import com.crud.library.exception.BookNotFoundException;
-import com.crud.library.mapper.LibraryMapper;
+import com.crud.library.mapper.BookCopyMapper;
 import com.crud.library.repository.BookCopyRepository;
 import com.crud.library.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.List;
 public class BookCopyService {
     private final BookCopyRepository bookCopyRepository;
     private final BookRepository bookRepository;
-    private final LibraryMapper libraryMapper;
+    private final BookCopyMapper bookCopyMapper;
     public void saveBookCopy(Long bookId) throws BookNotFoundException {
         Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
         BookCopy bookCopy = new BookCopy(book);
@@ -33,7 +33,7 @@ public class BookCopyService {
     }
     public List<BookCopyDTO> showAllBookCopies() {
         List<BookCopy> bookCopyList = bookCopyRepository.findAll();
-        return libraryMapper.mapToBookCopyDTOList(bookCopyList);
+        return bookCopyMapper.mapToBookCopyDTOList(bookCopyList);
     }
     public void changeBookCopyStatus(final Long bookCopyId, BookCopyStatus status) throws BookCopyNotFoundException {
         BookCopy bookCopy = bookCopyRepository.findById(bookCopyId).orElseThrow(BookCopyNotFoundException::new);
