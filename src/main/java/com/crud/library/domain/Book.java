@@ -3,6 +3,8 @@ package com.crud.library.domain;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import javax.persistence.*;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,10 +12,8 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Data
 @NoArgsConstructor
-@Getter
-@Setter
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "bookId")
 @Entity
 @Table(name = "books")

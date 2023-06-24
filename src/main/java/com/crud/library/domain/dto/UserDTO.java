@@ -1,6 +1,5 @@
 package com.crud.library.domain.dto;
 
-import com.crud.library.domain.BorrowRecord;
 import lombok.Getter;
 
 import java.time.LocalDate;

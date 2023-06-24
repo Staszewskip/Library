@@ -5,6 +5,8 @@ import com.crud.library.domain.dto.BookCopyDTO;
 import com.crud.library.domain.dto.BookDTO;
 import com.crud.library.domain.dto.BorrowRecordDTO;
 import com.crud.library.domain.dto.UserDTO;
+import com.crud.library.service.BookCopyService;
+import com.crud.library.service.BookService;
 import com.crud.library.service.DbService;
 import com.crud.library.exception.BookCopyNotFoundException;
 import com.crud.library.exception.BookNotFoundException;
@@ -28,6 +30,8 @@ import java.util.List;
 public class LibraryController {
 
     private final DbService dbService;
+    private final BookService bookService;
+    private final BookCopyService bookCopyService;
 
     @Operation(summary = "Adding new user")
     @ApiResponses(value = {
@@ -47,7 +51,7 @@ public class LibraryController {
     })
     @PostMapping(value = "addBook", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> addBook(@RequestBody BookDTO bookDTO) {
-        dbService.saveBook(bookDTO);
+        bookService.saveBook(bookDTO);
         return ResponseEntity.ok().build();
     }
 
@@ -60,7 +64,7 @@ public class LibraryController {
     })
     @PostMapping(value = "addBookCopy/{bookId}")
     public ResponseEntity<Void> addBookCopy(@PathVariable Long bookId) throws BookNotFoundException {
-        dbService.saveBookCopy(bookId);
+        bookCopyService.saveBookCopy(bookId);
         return ResponseEntity.ok().build();
     }
 
@@ -73,7 +77,7 @@ public class LibraryController {
     })
     @PostMapping(value = "changeBookCopyStatus/{bookCopyId}")
     public ResponseEntity<Void> changeBookCopyStatus(@PathVariable Long bookCopyId, @RequestParam BookCopyStatus status) throws BookCopyNotFoundException {
-        dbService.changeBookCopyStatus(bookCopyId, status);
+        bookCopyService.changeBookCopyStatus(bookCopyId, status);
         return ResponseEntity.ok().build();
     }
 
@@ -82,9 +86,9 @@ public class LibraryController {
             @ApiResponse(responseCode = "200",
                     description = "All books from database", content = {@Content(mediaType = "application/json")}),
     })
-    @GetMapping() //działa
+    @GetMapping()
     public ResponseEntity<List<BookDTO>> getBooks() {
-        return ResponseEntity.ok(dbService.showAllBooks());
+        return ResponseEntity.ok(bookService.showAllBooks());
     }
 
     @Operation(summary = "Fetching all book copies")
@@ -94,7 +98,7 @@ public class LibraryController {
     })
     @GetMapping(value = {"bookCopy"})
     public ResponseEntity<List<BookCopyDTO>> getBookCopy() {
-        return ResponseEntity.ok(dbService.showAllBookCopies());
+        return ResponseEntity.ok(bookCopyService.showAllBookCopies());
     }
 
     @Operation(summary = "Fetching number of available book copies (based on the title)")
@@ -104,7 +108,7 @@ public class LibraryController {
     })
     @GetMapping(value = {"title"})
     public ResponseEntity<Long> getNbOfBookCopies(@RequestParam String title) {
-        Long nbOfAvailCopies = dbService.getNbOfAvailBookCopies(title);
+        Long nbOfAvailCopies = bookCopyService.getNbOfAvailBookCopies(title);
         return ResponseEntity.ok(nbOfAvailCopies);
     }
 
@@ -178,7 +182,7 @@ public class LibraryController {
     })
     @DeleteMapping(value = "book/{bookId}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long bookId) throws BookNotFoundException {
-        dbService.deleteBook(bookId);
+        bookService.deleteBook(bookId);
         return ResponseEntity.ok().build();
     }
 
@@ -191,7 +195,7 @@ public class LibraryController {
     })
     @DeleteMapping(value = "bookCopy/{bookCopyId}")
     public ResponseEntity<Void> deleteBookCopy(@PathVariable Long bookCopyId) throws BookCopyNotFoundException {
-        dbService.deleteBookCopy(bookCopyId);
+        bookCopyService.deleteBookCopy(bookCopyId);
         return ResponseEntity.ok().build();
     }
 
@@ -216,6 +220,6 @@ public class LibraryController {
     })
     @PutMapping(value = "book", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BookDTO> updateBook(@RequestBody BookDTO bookDTO) throws BookNotFoundException {
-        return ResponseEntity.ok(dbService.updateBook(bookDTO));
+        return ResponseEntity.ok(bookService.updateBook(bookDTO));
     }
 }

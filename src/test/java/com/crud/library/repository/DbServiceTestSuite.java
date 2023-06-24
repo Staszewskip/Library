@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class DbServiceTestSuite {
     @Autowired
     private DbService dbService;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -36,6 +37,7 @@ class DbServiceTestSuite {
 
     @Autowired
     private LibraryMapper libraryMapper;
+
 
     @Test
     void testAddUser() {

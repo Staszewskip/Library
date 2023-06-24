@@ -1,10 +1,11 @@
 package com.crud.library.domain.dto;
 
+import lombok.Data;
 import lombok.Getter;
 
 import java.util.List;
 
-
+@Data
 @Getter
 public class BookDTO {
     private Long bookId;

@@ -36,7 +36,6 @@ public class LibraryMapper {
 
     public Book mapToBook(final BookDTO bookDTO) {
         return new Book(
-
                 bookDTO.getTitle(),
                 bookDTO.getAuthor(),
                 bookDTO.getYear()
